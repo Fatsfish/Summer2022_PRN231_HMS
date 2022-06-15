@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HMS_BE.Models;
+using HMS_BE.DTO;
+using AutoMapper;
 
 namespace HMS_BE.Controllers
 {
@@ -14,44 +16,51 @@ namespace HMS_BE.Controllers
     public class AllowedWorkGroupsController : ControllerBase
     {
         private readonly HMSContext _context;
-
-        public AllowedWorkGroupsController(HMSContext context)
+        private readonly IMapper _mapper;
+        public AllowedWorkGroupsController(HMSContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/AllowedWorkGroups
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<AllowedWorkGroup>>> GetAllowedWorkGroups()
+        public async Task<ActionResult<IEnumerable<HMS_BE.DTO.AllowedWorkGroup>>> GetAllowedWorkGroups()
         {
-            return await _context.AllowedWorkGroups.ToListAsync();
+
+            var rs = await _context.AllowedWorkGroups.ToListAsync();
+            var t = _mapper.Map<List<HMS_BE.DTO.AllowedWorkGroup>>(rs);
+            return t;
         }
 
         // GET: api/AllowedWorkGroups/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<AllowedWorkGroup>> GetAllowedWorkGroup(int id)
+        public async Task<ActionResult<HMS_BE.DTO.AllowedWorkGroup>> GetAllowedWorkGroup(int id)
         {
             var allowedWorkGroup = await _context.AllowedWorkGroups.FindAsync(id);
+
+            var t = _mapper.Map<HMS_BE.DTO.AllowedWorkGroup>(allowedWorkGroup);
 
             if (allowedWorkGroup == null)
             {
                 return NotFound();
             }
 
-            return allowedWorkGroup;
+            return t;
         }
 
         // PUT: api/AllowedWorkGroups/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAllowedWorkGroup(int id, AllowedWorkGroup allowedWorkGroup)
+        public async Task<IActionResult> PutAllowedWorkGroup(int id, HMS_BE.DTO.AllowedWorkGroup allowedWorkGroup)
         {
             if (id != allowedWorkGroup.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(allowedWorkGroup).State = EntityState.Modified;
+            var t = _mapper.Map<HMS_BE.Models.AllowedWorkGroup>(allowedWorkGroup);
+            _context.Entry(t).State = EntityState.Modified;
 
             try
             {
@@ -68,16 +77,16 @@ namespace HMS_BE.Controllers
                     throw;
                 }
             }
-
             return NoContent();
         }
 
         // POST: api/AllowedWorkGroups
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<AllowedWorkGroup>> PostAllowedWorkGroup(AllowedWorkGroup allowedWorkGroup)
+        public async Task<ActionResult<HMS_BE.DTO.AllowedWorkGroup>> PostAllowedWorkGroup(HMS_BE.DTO.AllowedWorkGroup allowedWorkGroup)
         {
-            _context.AllowedWorkGroups.Add(allowedWorkGroup);
+            var t = _mapper.Map<HMS_BE.Models.AllowedWorkGroup>(allowedWorkGroup);
+            _context.AllowedWorkGroups.Add(t);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetAllowedWorkGroup", new { id = allowedWorkGroup.Id }, allowedWorkGroup);

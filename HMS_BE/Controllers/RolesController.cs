@@ -13,7 +13,7 @@ namespace HMS_BE.Controllers
     [ApiController]
     public class RolesController : ControllerBase
     {
-        private readonly HMSContext _context;
+        private readonly HMS_BE.Models.HMSContext _context;
 
         public RolesController(HMSContext context)
         {

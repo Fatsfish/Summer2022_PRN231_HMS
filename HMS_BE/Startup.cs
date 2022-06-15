@@ -76,7 +76,7 @@ namespace HMS_BE
                 ValidateLifetime = true
             };
         });
-
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddControllers();
             services.AddCors(c =>
             {
