@@ -12,10 +12,6 @@ namespace HMS_BE.DAO
     {
         private static GroupDAO instance = null;
         private static readonly object instanceLock = new object();
-        private readonly IMapper _mapper;
-        private GroupDAO()
-        {
-        }
 
         public static GroupDAO Instance
         {
@@ -32,35 +28,32 @@ namespace HMS_BE.DAO
                 }
             }
         }
-        public async Task<IEnumerable<HMS_BE.DTO.Group?>> Get()
+        public async Task<IEnumerable<HMS_BE.Models.Group?>> Get()
         {
             var context = new HMSContext();
-            List<HMS_BE.Models.Group?> Group = await context.Groups.ToListAsync();
-            var r = _mapper.Map<IEnumerable<HMS_BE.DTO.Group>>(Group);
-            return r;
+            List<HMS_BE.Models.Group?> group = await context.Groups.ToListAsync();
+            return group;
         }
 
-        public async Task<IEnumerable<HMS_BE.DTO.Group?>> GetAvailableGroup()
+        public async Task<IEnumerable<HMS_BE.Models.Group?>> GetAvailableGroup()
         {
             var context = new HMSContext();
-            List<HMS_BE.Models.Group?> Group = await context.Groups.Where(group => group.IsDelete == false).ToListAsync();
-            var r = _mapper.Map<IEnumerable<HMS_BE.DTO.Group>>(Group);
-            return r;
+            List<HMS_BE.Models.Group?> group = await context.Groups.Where(group => group.IsDelete == false).ToListAsync();
+            return group;
         }
 
 
-        public async Task<HMS_BE.DTO.Group?> Get(int id)
+        public async Task<HMS_BE.Models.Group?> Get(int id)
         {
             var context = new HMSContext();
-            HMS_BE.Models.Group? Group = await context.Groups.Where(Group => Group.Id == id).FirstOrDefaultAsync();
-            var r = _mapper.Map<HMS_BE.DTO.Group>(Group);
-            return r;
+            HMS_BE.Models.Group? group = await context.Groups.Where(Group => Group.Id == id).FirstOrDefaultAsync();
+            return group;
         }
 
-        public async Task Add(HMS_BE.DTO.Group Group)
+        public async Task Add(HMS_BE.Models.Group group)
         {
             var context = new HMSContext();
-            context.Groups.Add(_mapper.Map<HMS_BE.Models.Group>(Group));
+            context.Groups.Add(group);
             await context.SaveChangesAsync();
         }
 
@@ -71,15 +64,15 @@ namespace HMS_BE.DAO
             {
                 var context = new HMSContext();
                 group.IsDelete = true;
-                context.Groups.Update(_mapper.Map<HMS_BE.Models.Group>(group));
+                context.Groups.Update(group);
                 await context.SaveChangesAsync();
             }
         }
 
-        public async Task Update(HMS_BE.DTO.Group Group)
+        public async Task Update(HMS_BE.Models.Group Group)
         {
             var context = new HMSContext();
-            context.Groups.Update(_mapper.Map<HMS_BE.Models.Group>(Group));
+            context.Groups.Update(Group);
             await context.SaveChangesAsync();
         }
 

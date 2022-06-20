@@ -1,5 +1,5 @@
-﻿using HMS_BE.DAO;
-using HMS_BE.DTO;
+﻿using AutoMapper;
+using HMS_BE.DAO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,34 +9,47 @@ namespace HMS_BE.Repository
 {
     public class GroupRepository : IGroupRepository
     {
-        public Task AddGroup(Group group)
+        private readonly IMapper _mapper;
+
+        public GroupRepository(IMapper mapper)
         {
-            return GroupDAO.Instance.Add(group);
+            _mapper = mapper;
+        }
+        public async Task AddGroup(HMS_BE.DTO.Group group)
+        {
+            var gr = _mapper.Map<HMS_BE.Models.Group>(group);
+            await GroupDAO.Instance.Add(gr);
+            return;
         }
 
-        public Task DeleteGroup(int id)
+        public async Task DeleteGroup(int id)
         {
-            return GroupDAO.Instance.Delete(id);
+            await GroupDAO.Instance.Delete(id);
+            return;
         }
 
-        public Task<IEnumerable<Group>> GetAvalableGroupList()
+        public async Task<IEnumerable<HMS_BE.DTO.Group>> GetAvalableGroupList()
         {
-            return GroupDAO.Instance.GetAvailableGroup();
+            var list = await GroupDAO.Instance.GetAvailableGroup();
+            return _mapper.Map<IEnumerable<HMS_BE.DTO.Group>>(list);
         }
 
-        public Task<Group> GetGroupById(int id)
+        public async Task<HMS_BE.DTO.Group> GetGroupById(int id)
         {
-            return GroupDAO.Instance.Get(id);
+            var group = await GroupDAO.Instance.Get(id);
+            return _mapper.Map<HMS_BE.DTO.Group>(group);
         }
 
-        public Task<IEnumerable<Group>> GetGroupList()
+        public async Task<IEnumerable<HMS_BE.DTO.Group>> GetGroupList()
         {
-            return GroupDAO.Instance.Get();
+            var list = await GroupDAO.Instance.Get();
+            return _mapper.Map<IEnumerable<HMS_BE.DTO.Group>>(list);
         }
 
-        public Task UpdateGroup(Group group)
+        public Task UpdateGroup(HMS_BE.DTO.Group group)
         {
-            return GroupDAO.Instance.Update(group);
+            var gr = _mapper.Map<HMS_BE.DTO.Group>(group);
+            return GroupDAO.Instance.Update(gr);
         }
     }
 }
