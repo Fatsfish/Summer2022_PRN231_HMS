@@ -1,5 +1,5 @@
-﻿using HMS_BE.DAO;
-using HMS_BE.DTO;
+﻿using AutoMapper;
+using HMS_BE.DAO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,14 +9,23 @@ namespace HMS_BE.Repository
 {
     public class GroupUserRepository : IGroupUserRepository
     {
-        public Task<GroupUser> GetGroupUserByID(int id)
+        private readonly IMapper _mapper;
+
+        public GroupUserRepository(IMapper mapper)
         {
-            return GroupUserDAO.Instance.GetGroupUserByID(id);
+            _mapper = mapper;
         }
 
-        public Task<IEnumerable<GroupUser>> GetGroupUsersByGroupId(int id)
+        public async Task<HMS_BE.DTO.GroupUser> GetGroupUserByID(int id)
         {
-            return GroupUserDAO.Instance.GetGroupUserByGroupId(id);
+            var groupuser = await GroupUserDAO.Instance.GetGroupUserByID(id);
+            return _mapper.Map<HMS_BE.DTO.GroupUser>(groupuser);
+        }
+
+        public async Task<IEnumerable<HMS_BE.DTO.GroupUser>> GetGroupUsersByGroupId(int id)
+        {
+            var list = await GroupUserDAO.Instance.GetGroupUserByGroupId(id);
+            return _mapper.Map<IEnumerable<HMS_BE.DTO.GroupUser>>(list);
         }
 
         public Task RemoveGroupUser(int id)

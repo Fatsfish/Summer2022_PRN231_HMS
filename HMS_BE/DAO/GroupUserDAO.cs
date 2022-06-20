@@ -12,10 +12,6 @@ namespace HMS_BE.DAO
     {
         private static GroupUserDAO instance = null;
         private static readonly object instanceLock = new object();
-        private readonly IMapper _mapper;
-        private GroupUserDAO()
-        {
-        }
 
         public static GroupUserDAO Instance
         {
@@ -33,20 +29,18 @@ namespace HMS_BE.DAO
             }
         }
 
-        public async Task<IEnumerable<HMS_BE.DTO.GroupUser?>> GetGroupUserByGroupId(int id)
+        public async Task<IEnumerable<HMS_BE.Models.GroupUser?>> GetGroupUserByGroupId(int id)
         {
             var context = new HMSContext();
-            List<HMS_BE.Models.GroupUser?> GroupUsers = await context.GroupUsers.Where(GroupUser => GroupUser.GroupId == id).ToListAsync();
-            var r = _mapper.Map<IEnumerable<HMS_BE.DTO.GroupUser>>(GroupUsers);
-            return r;
+            List<HMS_BE.Models.GroupUser?> groupUsers = await context.GroupUsers.Where(GroupUser => GroupUser.GroupId == id).ToListAsync();
+            return groupUsers;
         }
 
-        public async Task<HMS_BE.DTO.GroupUser?> GetGroupUserByID(int id)
+        public async Task<HMS_BE.Models.GroupUser?> GetGroupUserByID(int id)
         {
             var context = new HMSContext();
             HMS_BE.Models.GroupUser? groupUser = await context.GroupUsers.Where(GroupUser => GroupUser.Id == id).FirstOrDefaultAsync();
-            var r = _mapper.Map<HMS_BE.DTO.GroupUser>(groupUser);
-            return r;
+            return groupUser;
         }
 
         public async Task Delete(int id)
