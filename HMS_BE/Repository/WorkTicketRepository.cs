@@ -1,5 +1,5 @@
-﻿using HMS_BE.DAO;
-using HMS_BE.DTO;
+﻿using AutoMapper;
+using HMS_BE.DAO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,19 +9,27 @@ namespace HMS_BE.Repository
 {
     public class WorkTicketRepository : IWorkTicketRepository
     {
-        public Task<bool> CanLeaveGroup(int id)
+        private readonly IMapper _mapper;
+
+        public WorkTicketRepository(IMapper mapper)
         {
-            return WorkTicketDAO.Instance.CanLeaveGroup(id);
+            _mapper = mapper;
+        }
+        public async Task<bool> CanLeaveGroup(int id)
+        {
+            return await WorkTicketDAO.Instance.CanLeaveGroup(id);
         }
 
-        public Task<IEnumerable<WorkTicket>> GetAvailableWorkTicketsByUserID(int id)
+        public async Task<IEnumerable<HMS_BE.DTO.WorkTicket>> GetAvailableWorkTicketsByUserID(int id)
         {
-            return WorkTicketDAO.Instance.GetAvailableWorkTicketsByUserID(id);
+            var list = await WorkTicketDAO.Instance.GetAvailableWorkTicketsByUserID(id);
+            return _mapper.Map<IEnumerable<HMS_BE.DTO.WorkTicket>>(list);
         }
 
-        public Task<IEnumerable<WorkTicket>> GetWorkTicketsByUserID(int id)
+        public async Task<IEnumerable<HMS_BE.DTO.WorkTicket>> GetWorkTicketsByUserID(int id)
         {
-            return WorkTicketDAO.Instance.GetWorkTicketsByUserID(id);
+            var list = await WorkTicketDAO.Instance.GetWorkTicketsByUserID(id);
+            return _mapper.Map<IEnumerable<HMS_BE.DTO.WorkTicket>>(list);
         }
     }
 }

@@ -12,10 +12,6 @@ namespace HMS_BE.DAO
     {
         private static WorkTicketDAO instance = null;
         private static readonly object instanceLock = new object();
-        private readonly IMapper _mapper;
-        private WorkTicketDAO()
-        {
-        }
 
         public static WorkTicketDAO Instance
         {
@@ -33,20 +29,18 @@ namespace HMS_BE.DAO
             }
         }
 
-        public async Task<IEnumerable<HMS_BE.DTO.WorkTicket?>> GetAvailableWorkTicketsByUserID(int id)
+        public async Task<IEnumerable<HMS_BE.Models.WorkTicket?>> GetAvailableWorkTicketsByUserID(int id)
         {
             var context = new HMSContext();
             List<HMS_BE.Models.WorkTicket?> workTickets = await context.WorkTickets.Where(wt => wt.OwnerId == id && wt.IsDelete == false).ToListAsync();
-            var r = _mapper.Map<IEnumerable<HMS_BE.DTO.WorkTicket>>(workTickets);
-            return r;
+            return workTickets;
         }
 
-        public async Task<IEnumerable<HMS_BE.DTO.WorkTicket?>> GetWorkTicketsByUserID(int id)
+        public async Task<IEnumerable<HMS_BE.Models.WorkTicket?>> GetWorkTicketsByUserID(int id)
         {
             var context = new HMSContext();
             List<HMS_BE.Models.WorkTicket?> workTickets = await context.WorkTickets.Where(wt => wt.OwnerId == id).ToListAsync();
-            var r = _mapper.Map<IEnumerable<HMS_BE.DTO.WorkTicket>>(workTickets);
-            return r;
+            return workTickets;
         }
 
         public async Task<bool> CanLeaveGroup(int id)
