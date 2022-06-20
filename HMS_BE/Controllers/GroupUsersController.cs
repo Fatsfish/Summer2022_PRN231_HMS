@@ -97,8 +97,8 @@ namespace HMS_BE.Controllers
                 return NotFound();
             }
 
-            var worktickets = await _workTicketRepository.GetWorkTicketsByUserID(id);
-            if(worktickets.Count() > 0)
+            var canLeave = await _workTicketRepository.CanLeaveGroup(id);
+            if(canLeave)
             {
                 return BadRequest(new HMS_BE.DTO.Error { Message = "You must finish all work tickets to leave the group" });
             }

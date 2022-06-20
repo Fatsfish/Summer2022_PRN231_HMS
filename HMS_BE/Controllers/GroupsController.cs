@@ -32,6 +32,18 @@ namespace HMS_BE.Controllers
             return Ok(list);
         }
 
+        [HttpGet]
+        [Route("/AvailabelGroup")]
+        public async Task<ActionResult<IEnumerable<Group>>> GetAvailableGroups()
+        {
+            var list = await repo.GetAvalableGroupList();
+            if (list == null)
+            {
+                return NotFound();
+            }
+            return Ok(list);
+        }
+
         // GET: api/Groups/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Group>> GetGroup(int id)

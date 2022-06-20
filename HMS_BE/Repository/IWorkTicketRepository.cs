@@ -8,5 +8,7 @@ namespace HMS_BE.Repository
     public interface IWorkTicketRepository
     {
         Task<IEnumerable<HMS_BE.DTO.WorkTicket>> GetWorkTicketsByUserID(int id);
+        Task<IEnumerable<HMS_BE.DTO.WorkTicket>> GetAvailableWorkTicketsByUserID(int id);
+        Task<bool> CanLeaveGroup(int id);
     }
 }
