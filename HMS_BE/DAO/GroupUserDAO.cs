@@ -33,12 +33,32 @@ namespace HMS_BE.DAO
             }
         }
 
-        public async Task<List<HMS_BE.DTO.GroupUser?>> GetGroupUserByGroupId(int id)
+        public async Task<IEnumerable<HMS_BE.DTO.GroupUser?>> GetGroupUserByGroupId(int id)
         {
             var context = new HMSContext();
             List<HMS_BE.Models.GroupUser?> GroupUsers = await context.GroupUsers.Where(GroupUser => GroupUser.GroupId == id).ToListAsync();
-            var r = _mapper.Map<List<HMS_BE.DTO.GroupUser>>(GroupUsers);
+            var r = _mapper.Map<IEnumerable<HMS_BE.DTO.GroupUser>>(GroupUsers);
             return r;
+        }
+
+        public async Task<HMS_BE.DTO.GroupUser?> GetGroupUserByID(int id)
+        {
+            var context = new HMSContext();
+            HMS_BE.Models.GroupUser? groupUser = await context.GroupUsers.Where(GroupUser => GroupUser.Id == id).FirstOrDefaultAsync();
+            var r = _mapper.Map<HMS_BE.DTO.GroupUser>(groupUser);
+            return r;
+        }
+
+        public async Task Delete(int id)
+        {
+            if ((await GetGroupUserByGroupId(id)) != null)
+            {
+                var context = new HMSContext();
+                HMS_BE.Models.GroupUser GroupUser = new HMS_BE.Models.GroupUser() { Id = id };
+                context.GroupUsers.Attach(GroupUser);
+                context.GroupUsers.Remove(GroupUser);
+                await context.SaveChangesAsync();
+            }
         }
     }
 }

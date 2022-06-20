@@ -14,10 +14,14 @@ namespace HMS_BE.Controllers
     public class GroupUsersController : ControllerBase
     {
         private readonly HMS_BE.Models.HMSContext _context;
+        private readonly HMS_BE.Repository.IGroupUserRepository _groupUserRepository;
+        private readonly HMS_BE.Repository.IWorkTicketRepository _workTicketRepository;
 
-        public GroupUsersController(HMSContext context)
+        public GroupUsersController(HMSContext context, HMS_BE.Repository.IGroupUserRepository groupUserRepository, HMS_BE.Repository.IWorkTicketRepository workTicketRepository)
         {
             _context = context;
+            _groupUserRepository = groupUserRepository;
+            _workTicketRepository = workTicketRepository;
         }
 
         // GET: api/GroupUsers
@@ -87,15 +91,19 @@ namespace HMS_BE.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteGroupUser(int id)
         {
-            var groupUser = await _context.GroupUsers.FindAsync(id);
+            var groupUser = await _groupUserRepository.GetGroupUserByID(id);
             if (groupUser == null)
             {
                 return NotFound();
             }
 
-            _context.GroupUsers.Remove(groupUser);
-            await _context.SaveChangesAsync();
+            var worktickets = await _workTicketRepository.GetWorkTicketsByUserID(id);
+            if(worktickets.Count() > 0)
+            {
+                return BadRequest(new HMS_BE.DTO.Error { Message = "You must finish all work tickets to leave the group" });
+            }
 
+            await _groupUserRepository.RemoveGroupUser(id);
             return NoContent();
         }
 
