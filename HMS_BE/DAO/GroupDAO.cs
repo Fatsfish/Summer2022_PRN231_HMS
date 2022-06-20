@@ -40,6 +40,14 @@ namespace HMS_BE.DAO
             return r;
         }
 
+        public async Task<IEnumerable<HMS_BE.DTO.Group?>> GetAvailableGroup()
+        {
+            var context = new HMSContext();
+            List<HMS_BE.Models.Group?> Group = await context.Groups.Where(group => group.IsDelete == false).ToListAsync();
+            var r = _mapper.Map<IEnumerable<HMS_BE.DTO.Group>>(Group);
+            return r;
+        }
+
 
         public async Task<HMS_BE.DTO.Group?> Get(int id)
         {
@@ -58,12 +66,12 @@ namespace HMS_BE.DAO
 
         public async Task Delete(int id)
         {
-            if ((await Get(id)) != null)
+            var group = await Get(id);
+            if (group != null)
             {
                 var context = new HMSContext();
-                HMS_BE.Models.Group Group = new HMS_BE.Models.Group() { Id = id };
-                context.Groups.Attach(Group);
-                context.Groups.Remove(Group);
+                group.IsDelete = true;
+                context.Groups.Update(_mapper.Map<HMS_BE.Models.Group>(group));
                 await context.SaveChangesAsync();
             }
         }

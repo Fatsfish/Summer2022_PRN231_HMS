@@ -19,6 +19,11 @@ namespace HMS_BE.Repository
             return GroupDAO.Instance.Delete(id);
         }
 
+        public Task<IEnumerable<Group>> GetAvalableGroupList()
+        {
+            return GroupDAO.Instance.GetAvailableGroup();
+        }
+
         public Task<Group> GetGroupById(int id)
         {
             return GroupDAO.Instance.Get(id);
