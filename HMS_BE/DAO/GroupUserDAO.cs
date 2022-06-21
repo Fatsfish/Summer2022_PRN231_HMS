@@ -54,5 +54,20 @@ namespace HMS_BE.DAO
                 await context.SaveChangesAsync();
             }
         }
+
+        public async Task<IEnumerable<HMS_BE.Models.GroupUser?>> GetConditionGroupUserByGroupId(int id, bool condition)
+        {
+            var context = new HMSContext();
+            List<HMS_BE.Models.GroupUser?> groupUsers = await context.GroupUsers.Where(GroupUser => GroupUser.GroupId == id && GroupUser.IsLeader == condition).ToListAsync();
+            return groupUsers;
+        }
+
+        public async Task Add(HMS_BE.Models.GroupUser groupUser)
+        {
+            groupUser.IsLeader = false;
+            var context = new HMSContext();
+            context.GroupUsers.Add(groupUser);
+            await context.SaveChangesAsync();
+        }
     }
 }

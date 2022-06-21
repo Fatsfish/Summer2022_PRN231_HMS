@@ -48,7 +48,7 @@ namespace HMS_BE.Repository
 
         public Task UpdateGroup(HMS_BE.DTO.Group group)
         {
-            var gr = _mapper.Map<HMS_BE.DTO.Group>(group);
+            var gr = _mapper.Map<HMS_BE.Models.Group>(group);
             return GroupDAO.Instance.Update(gr);
         }
     }

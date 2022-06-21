@@ -26,9 +26,14 @@ namespace HMS_BE.Controllers
 
         // GET: api/GroupUsers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GroupUser>>> GetGroupUsers()
+        public async Task<ActionResult<IEnumerable<GroupUser>>> GetGroupUsers([System.Web.Http.FromUri] int id,[System.Web.Http.FromUri] bool condition)
         {
-            return await _context.GroupUsers.ToListAsync();
+            var list = await _groupUserRepository.GetConditionGroupUsersByGroupId(id, condition);
+            if (list == null)
+            {
+                return NotFound();
+            }
+            return Ok(list);
         }
 
         // GET: api/GroupUsers/5
@@ -79,12 +84,23 @@ namespace HMS_BE.Controllers
         // POST: api/GroupUsers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<GroupUser>> PostGroupUser(GroupUser groupUser)
+        public async Task<ActionResult<GroupUser>> PostGroupUser(HMS_BE.DTO.GroupUser groupUser)
         {
-            _context.GroupUsers.Add(groupUser);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _groupUserRepository.AddGroupUser(groupUser);
+            }
+            catch (DbUpdateException)
+            {
+                if (await _groupUserRepository.GetGroupUsersByGroupId(groupUser.Id) != null)
+                {
+                    return Conflict();
+                }
 
-            return CreatedAtAction("GetGroupUser", new { id = groupUser.Id }, groupUser);
+                throw;
+            }
+
+            return CreatedAtAction("GetGroup", new { id = groupUser.Id }, groupUser);
         }
 
         // DELETE: api/GroupUsers/5
@@ -100,7 +116,7 @@ namespace HMS_BE.Controllers
             var canLeave = await _workTicketRepository.CanLeaveGroup(id);
             if(canLeave)
             {
-                return BadRequest(new HMS_BE.DTO.Error { Message = "You must finish all work tickets to leave the group" });
+                return Conflict(new HMS_BE.DTO.Error { Message = "You must finish all work tickets to leave the group" });
             }
 
             await _groupUserRepository.RemoveGroupUser(id);
