@@ -9,12 +9,16 @@ using System.Linq;
 
 namespace DataAccess
 {
-    internal class MemberDAO
+    internal class UserDAO
     {
-        private static MemberDAO instance = null;
+        private static UserDAO instance = null;
         private static readonly object instanceLock = new object();
+        private readonly IMapper _mapper;
+        private UserDAO()
+        {
+        }
 
-        public static MemberDAO Instance
+        public static UserDAO Instance
         {
             get
             {
@@ -22,51 +26,45 @@ namespace DataAccess
                 {
                     if (instance == null)
                     {
-                        instance = new MemberDAO();
+                        instance = new UserDAO();
                     }
 
                     return instance;
                 }
             }
         }
-        public async Task<IEnumerable<HMS_BE.Models.User?>> Get()
+
+        public async Task<HMS_BE.DTO.User?> Get(int id)
         {
             var context = new HMSContext();
-            List<HMS_BE.Models.User?> user = await context.Users.ToListAsync();
-            return user;
+            HMS_BE.Models.User? User = await context.Users.Where(User => User.Id == id).FirstOrDefaultAsync();
+            var r = _mapper.Map<HMS_BE.DTO.User>(User);
+            return r;
         }
 
-
-        public async Task<HMS_BE.Models.User?> Get(int id)
+        public async Task Add(HMS_BE.DTO.User User)
         {
             var context = new HMSContext();
-            HMS_BE.Models.User? user = await context.Users.Where(User => User.Id == id).FirstOrDefaultAsync();
-            return user;
-        }
-
-        public async Task Add(HMS_BE.Models.User user)
-        {
-            var context = new HMSContext();
-            context.Users.Add(user);
+            context.Users.Add(_mapper.Map< HMS_BE.Models.User >( User));
             await context.SaveChangesAsync();
         }
 
         public async Task Delete(int id)
         {
-            var user = await Get(id);
-            if (user != null)
+            if ((await Get(id)) != null)
             {
                 var context = new HMSContext();
-                user.IsDelete = true;
-                context.Users.Update(user);
+                HMS_BE.Models.User User = new HMS_BE.Models.User() { Id = id };
+                context.Users.Attach(User);
+                context.Users.Remove(User);
                 await context.SaveChangesAsync();
             }
         }
 
-        public async Task Update(HMS_BE.Models.User User)
+        public async Task Update(HMS_BE.DTO.User User)
         {
             var context = new HMSContext();
-            context.Users.Update(User);
+            context.Users.Update(_mapper.Map<HMS_BE.Models.User>(User));
             await context.SaveChangesAsync();
         }
     }
