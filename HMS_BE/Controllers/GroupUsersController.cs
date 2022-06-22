@@ -26,7 +26,7 @@ namespace HMS_BE.Controllers
 
         // GET: api/GroupUsers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GroupUser>>> GetGroupUsers([System.Web.Http.FromUri] int id,[System.Web.Http.FromUri] bool condition)
+        public async Task<ActionResult<IEnumerable<GroupUser>>> GetGroupUsers([System.Web.Http.FromUri] int? id = null, [System.Web.Http.FromUri] bool condition = true)
         {
             var list = await _groupUserRepository.GetConditionGroupUsersByGroupId(id, condition);
             if (list == null)
@@ -53,29 +53,25 @@ namespace HMS_BE.Controllers
         // PUT: api/GroupUsers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutGroupUser(int id, GroupUser groupUser)
+        public async Task<IActionResult> PutGroupUser(int id, HMS_BE.DTO.GroupUser groupUser)
         {
-            if (id != groupUser.Id)
+            if (id != groupUser.Id || groupUser.IsLeader == false)
             {
                 return BadRequest();
             }
 
-            _context.Entry(groupUser).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                await _groupUserRepository.UpdateGroupUser(groupUser);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!GroupUserExists(id))
+                if (await _groupUserRepository.GetGroupUserByID(groupUser.Id) == null)
                 {
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
+
+                throw;
             }
 
             return NoContent();

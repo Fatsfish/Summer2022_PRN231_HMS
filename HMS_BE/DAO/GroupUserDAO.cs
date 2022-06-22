@@ -55,10 +55,19 @@ namespace HMS_BE.DAO
             }
         }
 
-        public async Task<IEnumerable<HMS_BE.Models.GroupUser?>> GetConditionGroupUserByGroupId(int id, bool condition)
+        public async Task<IEnumerable<HMS_BE.Models.GroupUser?>> GetConditionGroupUserByGroupId(int? id, bool condition)
         {
             var context = new HMSContext();
-            List<HMS_BE.Models.GroupUser?> groupUsers = await context.GroupUsers.Where(GroupUser => GroupUser.GroupId == id && GroupUser.IsLeader == condition).ToListAsync();
+            List<HMS_BE.Models.GroupUser?> groupUsers;
+            if (id == null)
+            {
+                groupUsers = await context.GroupUsers.Where(GroupUser =>GroupUser.IsLeader == condition).ToListAsync();
+            }
+            else
+            {
+                groupUsers = await context.GroupUsers.Where(GroupUser => GroupUser.GroupId == id && GroupUser.IsLeader == condition).ToListAsync();
+            }
+            
             return groupUsers;
         }
 
@@ -67,6 +76,13 @@ namespace HMS_BE.DAO
             groupUser.IsLeader = false;
             var context = new HMSContext();
             context.GroupUsers.Add(groupUser);
+            await context.SaveChangesAsync();
+        }
+
+        public async Task Update(HMS_BE.Models.GroupUser groupUser)
+        {
+            var context = new HMSContext();
+            context.GroupUsers.Update(groupUser);
             await context.SaveChangesAsync();
         }
     }
