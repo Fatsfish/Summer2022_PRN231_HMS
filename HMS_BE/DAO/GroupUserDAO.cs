@@ -73,6 +73,7 @@ namespace HMS_BE.DAO
 
         public async Task Add(HMS_BE.Models.GroupUser groupUser)
         {
+            groupUser.IsLeader = false;
             var context = new HMSContext();
             context.GroupUsers.Add(groupUser);
             await context.SaveChangesAsync();

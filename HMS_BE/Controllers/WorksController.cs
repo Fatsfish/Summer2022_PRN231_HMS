@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HMS_BE.DTO;
+using HMS_BE.Repository;
+using AutoMapper;
+using HMS_BE.DTO;
 
 namespace HMS_BE.Controllers
 {
@@ -20,6 +23,7 @@ namespace HMS_BE.Controllers
         {
             _workRepository = workRepository;
             _allowedWorkGroupRepository = allowedWorkGroupRepository;
+            workRepository = new WorkRepository(mapper);
         }
 
         //// GET: api/Works

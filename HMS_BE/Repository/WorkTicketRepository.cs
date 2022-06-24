@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using HMS_BE.DAO;
+using HMS_BE.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,13 @@ namespace HMS_BE.Repository
         {
             _mapper = mapper;
         }
+
+        public async Task AddWorkTicket(WorkTicket workTicket)
+        {
+            var workModel = _mapper.Map<WorkTicket, Models.WorkTicket>(workTicket);
+            await WorkTicketDAO.Instance.Add(workModel);
+        }
+
         public async Task<bool> CanLeaveGroup(int id)
         {
             return await WorkTicketDAO.Instance.CanLeaveGroup(id);
