@@ -34,6 +34,13 @@ namespace DataAccess
             }
         }
 
+        public async Task<IEnumerable<HMS_BE.Models.User?>> Get()
+        {
+            var context = new HMSContext();
+            List<HMS_BE.Models.User?> user = await context.Users.ToListAsync();
+            return user;
+        }
+
         public async Task<HMS_BE.DTO.User?> Get(int id)
         {
             var context = new HMSContext();
