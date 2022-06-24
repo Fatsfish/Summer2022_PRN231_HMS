@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using HMS_BE.Models;
+using HMS_BE.DTO;
 
 namespace HMS_BE.Controllers
 {
@@ -13,60 +13,73 @@ namespace HMS_BE.Controllers
     [ApiController]
     public class GroupsController : ControllerBase
     {
-        private readonly HMS_BE.Models.HMSContext _context;
+        private readonly HMS_BE.Repository.GroupRepository repo;
 
-        public GroupsController(HMSContext context)
+        public GroupsController(HMS_BE.Repository.GroupRepository repository)
         {
-            _context = context;
+            repo = repository;
         }
 
         // GET: api/Groups
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Group>>> GetGroups()
         {
-            return await _context.Groups.ToListAsync();
+            var list = await repo.GetGroupList();
+            if(list == null)
+            {
+                return NotFound();
+            }
+            return Ok(list);
+        }
+
+        [HttpGet]
+        [Route("/AvailabelGroup")]
+        public async Task<ActionResult<IEnumerable<Group>>> GetAvailableGroups()
+        {
+            var list = await repo.GetAvalableGroupList();
+            if (list == null)
+            {
+                return NotFound();
+            }
+            return Ok(list);
         }
 
         // GET: api/Groups/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Group>> GetGroup(int id)
         {
-            var @group = await _context.Groups.FindAsync(id);
+            var group = await repo.GetGroupById(id);
 
-            if (@group == null)
+            if (group == null)
             {
                 return NotFound();
             }
 
-            return @group;
+            return Ok(group);
         }
 
         // PUT: api/Groups/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutGroup(int id, Group @group)
+        public async Task<IActionResult> PutGroup(int id, HMS_BE.DTO.Group group)
         {
-            if (id != @group.Id)
+            if (id != group.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(@group).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                await repo.UpdateGroup(group);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!GroupExists(id))
+                if (await repo.GetGroupById(group.Id) == null)
                 {
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
+
+                throw;
             }
 
             return NoContent();
@@ -75,33 +88,37 @@ namespace HMS_BE.Controllers
         // POST: api/Groups
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Group>> PostGroup(Group @group)
+        public async Task<ActionResult<Group>> PostGroup(HMS_BE.DTO.Group group)
         {
-            _context.Groups.Add(@group);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await repo.AddGroup(group);
+            }
+            catch (DbUpdateException)
+            {
+                if (await repo.GetGroupById(group.Id) != null)
+                {
+                    return Conflict();
+                }
 
-            return CreatedAtAction("GetGroup", new { id = @group.Id }, @group);
+                throw;
+            }
+
+            return CreatedAtAction("GetGroup", new { id = group.Id }, group);
         }
 
         // DELETE: api/Groups/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteGroup(int id)
         {
-            var @group = await _context.Groups.FindAsync(id);
-            if (@group == null)
+            var group = await repo.GetGroupById(id);
+            if (group == null)
             {
                 return NotFound();
             }
 
-            _context.Groups.Remove(@group);
-            await _context.SaveChangesAsync();
-
+            await repo.DeleteGroup(id);
             return NoContent();
-        }
-
-        private bool GroupExists(int id)
-        {
-            return _context.Groups.Any(e => e.Id == id);
         }
     }
 }

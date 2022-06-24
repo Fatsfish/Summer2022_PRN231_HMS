@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using HMS_BE.Models;
+using HMS_BE.DTO;
 
 namespace HMS_BE.Controllers
 {
@@ -14,59 +14,63 @@ namespace HMS_BE.Controllers
     public class GroupUsersController : ControllerBase
     {
         private readonly HMS_BE.Models.HMSContext _context;
+        private readonly HMS_BE.Repository.IGroupUserRepository _groupUserRepository;
+        private readonly HMS_BE.Repository.IWorkTicketRepository _workTicketRepository;
 
-        public GroupUsersController(HMSContext context)
+        public GroupUsersController(HMS_BE.Repository.IGroupUserRepository groupUserRepository, HMS_BE.Repository.IWorkTicketRepository workTicketRepository)
         {
-            _context = context;
+            _groupUserRepository = groupUserRepository;
+            _workTicketRepository = workTicketRepository;
         }
 
         // GET: api/GroupUsers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GroupUser>>> GetGroupUsers()
+        public async Task<ActionResult<IEnumerable<GroupUser>>> GetGroupUsers([System.Web.Http.FromUri] int? id = null, [System.Web.Http.FromUri] bool condition = true)
         {
-            return await _context.GroupUsers.ToListAsync();
-        }
-
-        // GET: api/GroupUsers/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<GroupUser>> GetGroupUser(int id)
-        {
-            var groupUser = await _context.GroupUsers.FindAsync(id);
-
-            if (groupUser == null)
+            var list = await _groupUserRepository.GetConditionGroupUsersByGroupId(id, condition);
+            if (list == null)
             {
                 return NotFound();
             }
-
-            return groupUser;
+            return Ok(list);
         }
+
+        //// GET: api/GroupUsers/5
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<GroupUser>> GetGroupUser(int id)
+        //{
+        //    var groupUser = await _context.GroupUsers.FindAsync(id);
+
+        //    if (groupUser == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return groupUser;
+        //}
 
         // PUT: api/GroupUsers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutGroupUser(int id, GroupUser groupUser)
+        public async Task<IActionResult> PutGroupUser(int id, HMS_BE.DTO.GroupUser groupUser)
         {
-            if (id != groupUser.Id)
+            if (id != groupUser.Id || groupUser.IsLeader == false)
             {
                 return BadRequest();
             }
 
-            _context.Entry(groupUser).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                await _groupUserRepository.UpdateGroupUser(groupUser);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!GroupUserExists(id))
+                if (await _groupUserRepository.GetGroupUserByID(groupUser.Id) == null)
                 {
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
+
+                throw;
             }
 
             return NoContent();
@@ -75,27 +79,65 @@ namespace HMS_BE.Controllers
         // POST: api/GroupUsers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<GroupUser>> PostGroupUser(GroupUser groupUser)
+        public async Task<ActionResult<GroupUser>> PostGroupUser(HMS_BE.DTO.GroupUser groupUser)
         {
-            _context.GroupUsers.Add(groupUser);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _groupUserRepository.AddGroupUser(groupUser);
+            }
+            catch (DbUpdateException)
+            {
+                if (await _groupUserRepository.GetGroupUsersByGroupId(groupUser.Id) != null)
+                {
+                    return Conflict();
+                }
 
-            return CreatedAtAction("GetGroupUser", new { id = groupUser.Id }, groupUser);
+                throw;
+            }
+
+            return CreatedAtAction("GetGroup", new { id = groupUser.Id }, groupUser);
         }
+
+        //[HttpPost]
+        //public async Task<ActionResult<GroupUser>> PostGroupUser([FromBody] List<int> list)
+        //{
+        //    try
+        //    {
+        //        foreach(var id in list)
+        //        {
+        //            var gru = await 
+        //        }
+        //    }
+        //    catch (DbUpdateException)
+        //    {
+        //        if (await _groupUserRepository.GetGroupUsersByGroupId(groupUser.Id) != null)
+        //        {
+        //            return Conflict();
+        //        }
+
+        //        throw;
+        //    }
+
+        //    return CreatedAtAction("GetGroup", new { id = groupUser.Id }, groupUser);
+        //}
 
         // DELETE: api/GroupUsers/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteGroupUser(int id)
         {
-            var groupUser = await _context.GroupUsers.FindAsync(id);
+            var groupUser = await _groupUserRepository.GetGroupUserByID(id);
             if (groupUser == null)
             {
                 return NotFound();
             }
 
-            _context.GroupUsers.Remove(groupUser);
-            await _context.SaveChangesAsync();
+            var canLeave = await _workTicketRepository.CanLeaveGroup(id);
+            if(canLeave)
+            {
+                return Conflict(new HMS_BE.DTO.Error { Message = "You must finish all work tickets to leave the group" });
+            }
 
+            await _groupUserRepository.RemoveGroupUser(id);
             return NoContent();
         }
 
