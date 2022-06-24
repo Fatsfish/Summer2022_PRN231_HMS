@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using HMS_BE.Models;
+using HMS_BE.DTO;
 
 namespace HMS_BE.Controllers
 {
@@ -13,95 +13,102 @@ namespace HMS_BE.Controllers
     [ApiController]
     public class LeadersController : ControllerBase
     {
-        private readonly HMS_BE.Models.HMSContext _context;
+        private readonly HMS_BE.Repository.ILeaderRepository _leaderRepository;
 
-        public LeadersController(HMSContext context)
+        public LeadersController(HMS_BE.Repository.ILeaderRepository leaderRepository)
         {
-            _context = context;
+            _leaderRepository = leaderRepository;
         }
 
         // GET: api/Leaders
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<Leader>>> GetLeaders()
+        //{
+        //    return await _context.Leaders.ToListAsync();
+        //}
+
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Leader>>> GetLeaders()
+        public async Task<ActionResult<IEnumerable<Work>>> GetWorks([System.Web.Http.FromUri] int groupId)
         {
-            return await _context.Leaders.ToListAsync();
-        }
-
-        // GET: api/Leaders/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Leader>> GetLeader(int id)
-        {
-            var leader = await _context.Leaders.FindAsync(id);
+            var leader = await _leaderRepository.GetLeaderByGroupId(groupId);
 
             if (leader == null)
             {
                 return NotFound();
             }
-
-            return leader;
+            return Ok(leader);
         }
 
-        // PUT: api/Leaders/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutLeader(int id, Leader leader)
-        {
-            if (id != leader.Id)
-            {
-                return BadRequest();
-            }
+        //// GET: api/Leaders/5
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<Leader>> GetLeader(int id)
+        //{
+        //    var leader = await _context.Leaders.FindAsync(id);
 
-            _context.Entry(leader).State = EntityState.Modified;
+        //    if (leader == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!LeaderExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+        //    return leader;
+        //}
 
-            return NoContent();
-        }
+        //// PUT: api/Leaders/5
+        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> PutLeader(int id, Leader leader)
+        //{
+        //    if (id != leader.Id)
+        //    {
+        //        return BadRequest();
+        //    }
 
-        // POST: api/Leaders
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Leader>> PostLeader(Leader leader)
-        {
-            _context.Leaders.Add(leader);
-            await _context.SaveChangesAsync();
+        //    _context.Entry(leader).State = EntityState.Modified;
 
-            return CreatedAtAction("GetLeader", new { id = leader.Id }, leader);
-        }
+        //    try
+        //    {
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!LeaderExists(id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
 
-        // DELETE: api/Leaders/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteLeader(int id)
-        {
-            var leader = await _context.Leaders.FindAsync(id);
-            if (leader == null)
-            {
-                return NotFound();
-            }
+        //    return NoContent();
+        //}
 
-            _context.Leaders.Remove(leader);
-            await _context.SaveChangesAsync();
+        //// POST: api/Leaders
+        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //[HttpPost]
+        //public async Task<ActionResult<Leader>> PostLeader(Leader leader)
+        //{
+        //    _context.Leaders.Add(leader);
+        //    await _context.SaveChangesAsync();
 
-            return NoContent();
-        }
+        //    return CreatedAtAction("GetLeader", new { id = leader.Id }, leader);
+        //}
 
-        private bool LeaderExists(int id)
-        {
-            return _context.Leaders.Any(e => e.Id == id);
-        }
+        //// DELETE: api/Leaders/5
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteLeader(int id)
+        //{
+        //    var leader = await _context.Leaders.FindAsync(id);
+        //    if (leader == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    _context.Leaders.Remove(leader);
+        //    await _context.SaveChangesAsync();
+
+        //    return NoContent();
+        //}
     }
 }

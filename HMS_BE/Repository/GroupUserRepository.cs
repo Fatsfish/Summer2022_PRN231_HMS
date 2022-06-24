@@ -23,6 +23,13 @@ namespace HMS_BE.Repository
             return;
         }
 
+        public async Task AddListGroupUser(IEnumerable<HMS_BE.DTO.GroupUser> groupUsers)
+        {
+            var grs = _mapper.Map<IEnumerable<HMS_BE.Models.GroupUser>>(groupUsers);
+            await GroupUserDAO.Instance.AddList(grs);
+            return;
+        }
+
         public async Task<IEnumerable<HMS_BE.DTO.GroupUser>> GetConditionGroupUsersByGroupId(int? id, bool condition)
         {
             var list = await GroupUserDAO.Instance.GetConditionGroupUserByGroupId(id, condition);

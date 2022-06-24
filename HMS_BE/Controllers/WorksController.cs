@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using HMS_BE.DTO;
 using HMS_BE.Repository;
 using AutoMapper;
+using HMS_BE.DTO;
 
 namespace HMS_BE.Controllers
 {
@@ -15,77 +16,113 @@ namespace HMS_BE.Controllers
     [ApiController]
     public class WorksController : ControllerBase
     {
-        private readonly IWorkRepository workRepository;
+        private readonly HMS_BE.Repository.IWorkRepository _workRepository;
+        private readonly HMS_BE.Repository.IAllowedWorkGroupRepository _allowedWorkGroupRepository;
 
-        public WorksController(IMapper mapper)
+        public WorksController(HMS_BE.Repository.IWorkRepository workRepository, HMS_BE.Repository.IAllowedWorkGroupRepository allowedWorkGroupRepository)
         {
+            _workRepository = workRepository;
+            _allowedWorkGroupRepository = allowedWorkGroupRepository;
             workRepository = new WorkRepository(mapper);
         }
 
+        //// GET: api/Works
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<Work>>> GetWorks()
+        //{
+        //    return await _context.Works.ToListAsync();
+        //}
+
+        // GET: api/Works
+        // GET work by group id
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Work>>> GetWorks([FromQuery]bool isAvailable)
-        { 
-            if (isAvailable)
-            {
-                var availableList = await workRepository.GetAvalableWorkList();
-                return Ok(availableList);
-            }
-            var list = await workRepository.GetWorkList();
-            return Ok(list);
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Work>> GetWork(int id)
+        public async Task<ActionResult<IEnumerable<Work>>> GetWorks([System.Web.Http.FromUri] int groupId)
         {
-            var work = workRepository.GetWorkById(id);
-
-            if (work == null)
+            var wgrlist = await _allowedWorkGroupRepository.GetAllowedWorkGroupsByGroupID(groupId);
+            
+            if (wgrlist == null)
             {
                 return NotFound();
             }
-
-            return Ok(work);
+            List<Work> wlist = new List<Work>();
+            foreach (var wgr in wgrlist)
+                {
+                    var w = await _workRepository.GetWorkById((int)wgr.WorkId);
+                    wlist.Add(w);
+                }
+            return Ok(wlist.AsEnumerable());
         }
 
-        // PUT: api/Works/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutWork(int id, Work work)
-        {
-            if (id != work.Id)
-            {
-                return BadRequest();
-            }
+        //// GET: api/Works/5
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<Work>> GetWork(int id)
+        //{
+        //    var work = await _context.Works.FindAsync(id);
 
-            try
-            {
-                await workRepository.UpdateWork(work);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(500, e.Message);
-            }
+        //    if (work == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return NoContent();
-        }
+        //    return work;
+        //}
 
-        // POST: api/Works
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Work>> PostWork(Work work)
-        {
-            await workRepository.AddWork(work);
+        //// PUT: api/Works/5
+        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> PutWork(int id, Work work)
+        //{
+        //    if (id != work.Id)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            return CreatedAtAction("GetWork", new { id = work.Id }, work);
-        }
+        //    _context.Entry(work).State = EntityState.Modified;
 
-        // DELETE: api/Works/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteWork(int id)
-        {
-            await workRepository.DeleteWork(id);
+        //    try
+        //    {
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!WorkExists(id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
+
+        //// POST: api/Works
+        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //[HttpPost]
+        //public async Task<ActionResult<Work>> PostWork(Work work)
+        //{
+        //    _context.Works.Add(work);
+        //    await _context.SaveChangesAsync();
+
+        //    return CreatedAtAction("GetWork", new { id = work.Id }, work);
+        //}
+
+        //// DELETE: api/Works/5
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteWork(int id)
+        //{
+        //    var work = await _context.Works.FindAsync(id);
+        //    if (work == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    _context.Works.Remove(work);
+        //    await _context.SaveChangesAsync();
+
+        //    return NoContent();
+        //}
     }
 }

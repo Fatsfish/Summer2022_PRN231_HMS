@@ -85,5 +85,12 @@ namespace HMS_BE.DAO
             context.GroupUsers.Update(groupUser);
             await context.SaveChangesAsync();
         }
+
+        public async Task AddList(IEnumerable<HMS_BE.Models.GroupUser> groupUsers)
+        {
+            var context = new HMSContext();
+            await context.GroupUsers.AddRangeAsync(groupUsers);
+            await context.SaveChangesAsync();
+        }
     }
 }

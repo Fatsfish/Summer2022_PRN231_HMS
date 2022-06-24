@@ -1,5 +1,6 @@
 ﻿using HMS_BE.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -45,7 +46,7 @@ namespace HMS_BE.DAO
         public async Task<HMS_BE.Models.Work?> Get(int id)
         {
             var context = new HMSContext();
-            HMS_BE.Models.Work? work = await context.Works.Where(Work => Work.Id == id).FirstOrDefaultAsync();
+            HMS_BE.Models.Work? work = await context.Works.Where(work => work.Id == id).FirstOrDefaultAsync();
             return work;
         }
 

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using HMS_BE.Models;
+using HMS_BE.DTO;
 
 namespace HMS_BE.Controllers
 {
@@ -17,9 +17,8 @@ namespace HMS_BE.Controllers
         private readonly HMS_BE.Repository.IGroupUserRepository _groupUserRepository;
         private readonly HMS_BE.Repository.IWorkTicketRepository _workTicketRepository;
 
-        public GroupUsersController(HMSContext context, HMS_BE.Repository.IGroupUserRepository groupUserRepository, HMS_BE.Repository.IWorkTicketRepository workTicketRepository)
+        public GroupUsersController(HMS_BE.Repository.IGroupUserRepository groupUserRepository, HMS_BE.Repository.IWorkTicketRepository workTicketRepository)
         {
-            _context = context;
             _groupUserRepository = groupUserRepository;
             _workTicketRepository = workTicketRepository;
         }
@@ -36,19 +35,19 @@ namespace HMS_BE.Controllers
             return Ok(list);
         }
 
-        // GET: api/GroupUsers/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<GroupUser>> GetGroupUser(int id)
-        {
-            var groupUser = await _context.GroupUsers.FindAsync(id);
+        //// GET: api/GroupUsers/5
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<GroupUser>> GetGroupUser(int id)
+        //{
+        //    var groupUser = await _context.GroupUsers.FindAsync(id);
 
-            if (groupUser == null)
-            {
-                return NotFound();
-            }
+        //    if (groupUser == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return groupUser;
-        }
+        //    return groupUser;
+        //}
 
         // PUT: api/GroupUsers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -98,6 +97,29 @@ namespace HMS_BE.Controllers
 
             return CreatedAtAction("GetGroup", new { id = groupUser.Id }, groupUser);
         }
+
+        //[HttpPost]
+        //public async Task<ActionResult<GroupUser>> PostGroupUser([FromBody] List<int> list)
+        //{
+        //    try
+        //    {
+        //        foreach(var id in list)
+        //        {
+        //            var gru = await 
+        //        }
+        //    }
+        //    catch (DbUpdateException)
+        //    {
+        //        if (await _groupUserRepository.GetGroupUsersByGroupId(groupUser.Id) != null)
+        //        {
+        //            return Conflict();
+        //        }
+
+        //        throw;
+        //    }
+
+        //    return CreatedAtAction("GetGroup", new { id = groupUser.Id }, groupUser);
+        //}
 
         // DELETE: api/GroupUsers/5
         [HttpDelete("{id}")]

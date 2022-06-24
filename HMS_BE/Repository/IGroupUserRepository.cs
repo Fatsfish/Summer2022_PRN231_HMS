@@ -13,5 +13,6 @@ namespace HMS_BE.Repository
         Task RemoveGroupUser(int id);
         Task AddGroupUser(HMS_BE.DTO.GroupUser groupUser);
         Task UpdateGroupUser(HMS_BE.DTO.GroupUser groupUser);
+        Task AddListGroupUser(IEnumerable<HMS_BE.DTO.GroupUser> groupUsers);
     }
 }

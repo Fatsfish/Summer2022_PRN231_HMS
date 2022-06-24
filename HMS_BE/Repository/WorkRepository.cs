@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using HMS_BE.DAO;
 using HMS_BE.DTO;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace HMS_BE.Repository
@@ -9,6 +11,7 @@ namespace HMS_BE.Repository
     public class WorkRepository : IWorkRepository
     {
         private readonly IMapper _mapper;
+
         public WorkRepository(IMapper mapper)
         {
             _mapper = mapper;
@@ -31,24 +34,10 @@ namespace HMS_BE.Repository
             return data;
         }
 
-        public async Task<Work> GetWorkById(int id)
+        public async Task<HMS_BE.DTO.Work> GetWorkById(int id)
         {
-            var workModel = await WorkDAO.Instance.Get(id);
-            var work = _mapper.Map<Models.Work, Work>(workModel);
-            return work;
-        }
-
-        public async Task<IEnumerable<Work>> GetWorkList()
-        {
-            var workModelList = await WorkDAO.Instance.Get();
-            var workList = _mapper.Map<IEnumerable<Models.Work>, IEnumerable<Work>>(workModelList);
-            return workList;
-        }
-
-        public async Task UpdateWork(Work work)
-        {
-            var workModel = _mapper.Map<Work, Models.Work>(work);
-            await WorkDAO.Instance.Update(workModel);
+            var w = await WorkDAO.Instance.Get(id);
+            return _mapper.Map<HMS_BE.DTO.Work>(w);
         }
     }
 }
