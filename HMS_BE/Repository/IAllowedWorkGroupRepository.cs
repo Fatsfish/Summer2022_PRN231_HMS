@@ -7,6 +7,6 @@ namespace HMS_BE.Repository
 {
     public interface IAllowedWorkGroupRepository
     {
-        Task<IEnumerable<HMS_BE.DTO.AllowedWorkGroup>> GetAllowedWorkGroupsByGroupID(int id)
+        Task<IEnumerable<HMS_BE.DTO.AllowedWorkGroup>> GetAllowedWorkGroupsByGroupID(int id);
     }
 }

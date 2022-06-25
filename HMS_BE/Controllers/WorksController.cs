@@ -124,5 +124,47 @@ namespace HMS_BE.Controllers
 
         //    return NoContent();
         //}
+
+        // PUT: api/Works/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutWork(int id, Work work)
+        {
+            if (id != work.Id)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                await _workRepository.UpdateWork(work);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+
+            return NoContent();
+        }
+
+        // POST: api/Works
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult<Work>> PostWork(Work work)
+        {
+            await _workRepository.AddWork(work);
+
+            return CreatedAtAction("GetWork", new { id = work.Id }, work);
+        }
+
+        // DELETE: api/Works/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteWork(int id)
+        {
+            await _workRepository.DeleteWork(id);
+
+            return NoContent();
+        }
+
     }
 }

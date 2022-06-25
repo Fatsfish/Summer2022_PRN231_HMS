@@ -34,10 +34,29 @@ namespace HMS_BE.Repository
             return _mapper.Map<IEnumerable<HMS_BE.DTO.WorkTicket>>(list);
         }
 
-        public async Task<IEnumerable<HMS_BE.DTO.WorkTicket>> GetWorkTicketsByUserID(int id)
+        public async Task<IEnumerable<WorkTicket>> GetDoneWorkTickets()
         {
-            var list = await WorkTicketDAO.Instance.GetWorkTicketsByUserID(id);
-            return _mapper.Map<IEnumerable<HMS_BE.DTO.WorkTicket>>(list);
+            var workList = await WorkTicketDAO.Instance.GetDoneWorkTicket();
+            var data = _mapper.Map<IEnumerable<Models.WorkTicket>, IEnumerable<WorkTicket>>(workList);
+            return data;
+        }
+
+        public async Task<IEnumerable<WorkTicket>> GetWorkTicketsByUserID(int id)
+        {
+            var workTicketList = await WorkTicketDAO.Instance.GetWorkTicketsByUserID(id);
+            var data = _mapper.Map<IEnumerable<Models.WorkTicket>, IEnumerable<WorkTicket>>(workTicketList);
+            return data;
+        }
+
+        public async Task UpdateWorkTicket(WorkTicket workTicket)
+        {
+            var workTicketModel = _mapper.Map<WorkTicket, Models.WorkTicket>(workTicket);
+            await WorkTicketDAO.Instance.Update(workTicketModel);
+        }
+
+        public async Task DeleteWorkTicket(int id)
+        {
+            await WorkTicketDAO.Instance.Delete(id);
         }
     }
 }
