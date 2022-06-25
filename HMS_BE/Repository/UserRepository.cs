@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using BusinessLayer.ResponseModels.ViewModels;
 using HMS_BE.DAO;
+using HMS_BE.Models.PagingModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,10 +17,25 @@ namespace HMS_BE.Repository
         {
             _mapper = mapper;
         }
-        public async Task<IEnumerable<HMS_BE.DTO.User>> GetUserList()
+        public async Task<BasePagingModel<HMS_BE.DTO.User>> GetUserList(PagingModel paging)
         {
             var list = await UserDAO.Instance.Get();
-            return _mapper.Map<IEnumerable<HMS_BE.DTO.User>>(list);
+
+            // Calculate total item and total page
+            int totalItem = list.ToList().Count;
+
+            list = list.Skip((paging.PageIndex - 1) * paging.PageSize)
+                .Take(paging.PageSize).ToList();
+
+            var userResult = new BasePagingModel<HMS_BE.DTO.User>()
+            {
+                PageIndex = paging.PageIndex,
+                PageSize = paging.PageSize,
+                TotalItem = totalItem,
+                TotalPage = (int)Math.Ceiling((decimal)totalItem / (decimal)paging.PageSize)
+            };
+
+            return userResult;
         }
 
         public async Task<HMS_BE.DTO.User> GetUserById(int id)

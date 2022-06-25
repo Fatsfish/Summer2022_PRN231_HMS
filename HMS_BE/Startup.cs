@@ -31,6 +31,7 @@ namespace HMS_BE
 
             services.AddSwaggerGen(c =>
             {
+                c.CustomSchemaIds(type => type.ToString());
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "HMS_BE",
@@ -95,6 +96,7 @@ namespace HMS_BE
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "HMS_BE v1"));
             }
+            app.UseDeveloperExceptionPage();
 
             app.UseHttpsRedirection();
 

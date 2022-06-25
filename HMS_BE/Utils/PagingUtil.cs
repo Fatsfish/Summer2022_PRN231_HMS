@@ -1,23 +1,19 @@
 ﻿using HMS_BE.Constants;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using HMS_BE.Models.PagingModel;
 
-namespace Utilities
+namespace HMS_BE.Utils
 {
     public static class PagingUtil
     {
-        public static PagingRequestModel getDefaultPaging()
+        public static PagingModel getDefaultPaging()
         {
-            return new PagingRequestModel
+            return new PagingModel
             {
                 PageIndex = PageConstant.DefaultPageIndex,
                 PageSize = PageConstant.DefaultPageSize
             };
         }
-        public static PagingRequestModel checkDefaultPaging(PagingRequestModel paging)
+        public static PagingModel checkDefaultPaging(PagingModel paging)
         {
             if (paging.PageIndex <= 0) paging.PageIndex = PageConstant.DefaultPageIndex;
             if (paging.PageSize <= 0) paging.PageSize = PageConstant.DefaultPageSize;
