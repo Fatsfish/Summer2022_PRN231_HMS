@@ -63,7 +63,7 @@ namespace HMS_BE
                     }
                 });
 
-
+                c.CustomSchemaIds(type => type.ToString());
             });
             services
         .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

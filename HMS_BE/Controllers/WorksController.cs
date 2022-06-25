@@ -23,7 +23,6 @@ namespace HMS_BE.Controllers
         {
             _workRepository = workRepository;
             _allowedWorkGroupRepository = allowedWorkGroupRepository;
-            workRepository = new WorkRepository(mapper);
         }
 
         //// GET: api/Works
