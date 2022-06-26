@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using HMS_BE.Models;
 using HMS_BE.Models.PagingModel;
 using HMS_BE.Utils;
+using HMS_BE.Models.SearchModel;
 
 namespace HMS_BE.Controllers
 {
@@ -23,10 +24,15 @@ namespace HMS_BE.Controllers
 
         // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers([FromQuery] PagingModel paging)
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers([FromQuery] UserSearchModel searchModel, [FromQuery] PagingModel paging)
         {
             try
             {
+                if (searchModel is null)
+                {
+                    throw new ArgumentNullException(nameof(searchModel));
+                }
+
                 paging = PagingUtil.checkDefaultPaging(paging);
                 var users = await _context.Users.ToListAsync();
                 return users;

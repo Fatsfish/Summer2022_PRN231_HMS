@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace BusinessLayer.ResponseModels.ViewModels
+namespace HMS_BE.Models.PagingModel
 {
     public class BasePagingModel<TViewModel>
     {
