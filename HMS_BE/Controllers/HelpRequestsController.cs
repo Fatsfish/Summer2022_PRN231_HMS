@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using HMS_BE.Models;
 
 namespace HMS_BE.Controllers
 {
@@ -15,21 +14,21 @@ namespace HMS_BE.Controllers
     {
         private readonly HMS_BE.Models.HMSContext _context;
 
-        public HelpRequestsController(HMSContext context)
+        public HelpRequestsController(HMS_BE.Models.HMSContext context)
         {
             _context = context;
         }
 
         // GET: api/HelpRequests
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<HelpRequest>>> GetHelpRequests()
+        public async Task<ActionResult<IEnumerable<HMS_BE.Models.HelpRequest>>> GetHelpRequests()
         {
             return await _context.HelpRequests.ToListAsync();
         }
 
         // GET: api/HelpRequests/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<HelpRequest>> GetHelpRequest(int id)
+        public async Task<ActionResult<HMS_BE.Models.HelpRequest>> GetHelpRequest(int id)
         {
             var helpRequest = await _context.HelpRequests.FindAsync(id);
 
@@ -44,7 +43,7 @@ namespace HMS_BE.Controllers
         // PUT: api/HelpRequests/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutHelpRequest(int id, HelpRequest helpRequest)
+        public async Task<IActionResult> PutHelpRequest(int id, HMS_BE.Models.HelpRequest helpRequest)
         {
             if (id != helpRequest.Id)
             {
@@ -75,7 +74,7 @@ namespace HMS_BE.Controllers
         // POST: api/HelpRequests
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<HelpRequest>> PostHelpRequest(HelpRequest helpRequest)
+        public async Task<ActionResult<HMS_BE.Models.HelpRequest>> PostHelpRequest(HMS_BE.Models.HelpRequest helpRequest)
         {
             _context.HelpRequests.Add(helpRequest);
             await _context.SaveChangesAsync();

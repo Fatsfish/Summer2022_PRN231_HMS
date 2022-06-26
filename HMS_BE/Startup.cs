@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore.SqlServer;
+using Microsoft.EntityFrameworkCore;
 
 namespace HMS_BE
 {
@@ -28,7 +30,8 @@ namespace HMS_BE
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddDbContext<HMS_BE.Models.HMSContext>(options =>
+                options.UseSqlServer(Configuration["ConnectionStrings:DB"]));
             services.AddSwaggerGen(c =>
             {
                 c.CustomSchemaIds(type => type.ToString());
@@ -61,7 +64,7 @@ namespace HMS_BE
                     }
                 });
 
-
+                c.CustomSchemaIds(type => type.ToString());
             });
             services
         .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
