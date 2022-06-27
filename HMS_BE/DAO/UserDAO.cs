@@ -7,7 +7,7 @@ using System;
 using AutoMapper;
 using System.Linq;
 
-namespace DataAccess
+namespace HMS_BE.DAO
 {
     internal class UserDAO
     {

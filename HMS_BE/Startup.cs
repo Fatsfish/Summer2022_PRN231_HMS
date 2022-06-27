@@ -13,6 +13,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore.SqlServer;
+using Microsoft.EntityFrameworkCore;
+using HMS_BE.Repository;
 
 namespace HMS_BE
 {
@@ -28,9 +31,21 @@ namespace HMS_BE
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //services.AddDbContext<HMS_BE.Models.HMSContext>(options =>
+             //   options.UseSqlServer(Configuration["ConnectionStrings:DB"]));
+            services.AddDbContext<HMS_BE.Models.HMSContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DB")));
+
+            services.AddScoped<IGroupUserRepository, GroupUserRepository>();
+            services.AddScoped<IAllowedWorkGroupRepository, AllowedWorkGroupRepository>();
+            services.AddScoped<IGroupRepository, GroupRepository>();
+            services.AddScoped<ILeaderRepository, LeaderRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IWorkRepository, WorkRepository>();
+            services.AddScoped<IWorkTicketRepository, WorkTicketRepository>();
 
             services.AddSwaggerGen(c =>
             {
+                c.CustomSchemaIds(type => type.ToString());
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "HMS_BE",
@@ -60,7 +75,7 @@ namespace HMS_BE
                     }
                 });
 
-
+                c.CustomSchemaIds(type => type.ToString());
             });
             services
         .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -95,6 +110,7 @@ namespace HMS_BE
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "HMS_BE v1"));
             }
+            app.UseDeveloperExceptionPage();
 
             app.UseHttpsRedirection();
 

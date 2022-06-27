@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using HMS_BE.DTO;
 
 namespace HMS_BE.Controllers
 {
@@ -13,16 +12,16 @@ namespace HMS_BE.Controllers
     [ApiController]
     public class GroupsController : ControllerBase
     {
-        private readonly HMS_BE.Repository.GroupRepository repo;
+        private readonly HMS_BE.Repository.IGroupRepository repo;
 
-        public GroupsController(HMS_BE.Repository.GroupRepository repository)
+        public GroupsController(HMS_BE.Repository.IGroupRepository repository)
         {
             repo = repository;
         }
 
         // GET: api/Groups
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Group>>> GetGroups()
+        public async Task<ActionResult<IEnumerable<HMS_BE.DTO.Group>>> GetGroups()
         {
             var list = await repo.GetGroupList();
             if(list == null)
@@ -34,7 +33,7 @@ namespace HMS_BE.Controllers
 
         [HttpGet]
         [Route("/AvailabelGroup")]
-        public async Task<ActionResult<IEnumerable<Group>>> GetAvailableGroups()
+        public async Task<ActionResult<IEnumerable<HMS_BE.DTO.Group>>> GetAvailableGroups()
         {
             var list = await repo.GetAvalableGroupList();
             if (list == null)
@@ -46,7 +45,7 @@ namespace HMS_BE.Controllers
 
         // GET: api/Groups/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Group>> GetGroup(int id)
+        public async Task<ActionResult<HMS_BE.DTO.Group>> GetGroup(int id)
         {
             var group = await repo.GetGroupById(id);
 
@@ -88,7 +87,7 @@ namespace HMS_BE.Controllers
         // POST: api/Groups
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Group>> PostGroup(HMS_BE.DTO.Group group)
+        public async Task<ActionResult<HMS_BE.DTO.Group>> PostGroup(HMS_BE.DTO.Group group)
         {
             try
             {

@@ -28,7 +28,7 @@ namespace HMS_BE.Controllers
         //}
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Work>>> GetWorks([System.Web.Http.FromUri] int groupId)
+        public async Task<ActionResult<IEnumerable<Work>>> GetLeaders([System.Web.Http.FromUri] int groupId)
         {
             var leader = await _leaderRepository.GetLeaderByGroupId(groupId);
 

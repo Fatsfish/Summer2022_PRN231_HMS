@@ -30,7 +30,11 @@ namespace HMS_BE.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            
+            if (!optionsBuilder.IsConfigured)
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseSqlServer("workstation id=WMSystem.mssql.somee.com;packet size=4096;user id=fatsfish_SQLLogin_1;pwd=oymhd7aij6;data source=WMSystem.mssql.somee.com;persist security info=False;initial catalog=WMSystem");
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -75,7 +79,7 @@ namespace HMS_BE.Models
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 
-                entity.Property(e => e.IsLeader).HasColumnName("isLeader");
+                entity.Property(e => e.IsLeader).HasColumnName("isApproved");
 
                 entity.HasOne(d => d.Group)
                     .WithMany(p => p.GroupUsers)
