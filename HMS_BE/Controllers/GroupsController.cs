@@ -12,9 +12,9 @@ namespace HMS_BE.Controllers
     [ApiController]
     public class GroupsController : ControllerBase
     {
-        private readonly HMS_BE.Repository.GroupRepository repo;
+        private readonly HMS_BE.Repository.IGroupRepository repo;
 
-        public GroupsController(HMS_BE.Repository.GroupRepository repository)
+        public GroupsController(HMS_BE.Repository.IGroupRepository repository)
         {
             repo = repository;
         }
