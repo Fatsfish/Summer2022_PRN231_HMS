@@ -99,6 +99,9 @@ namespace HMS_BE
                 c.AddPolicy("AllowHeader", options => options.AllowAnyHeader());
                 c.AddPolicy("AllowMethod", options => options.AllowAnyMethod());
             });
+
+            // Admin
+            services.AddTransient<HMS_BE.Repository.IUserRepository, HMS_BE.Repository.UserRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
