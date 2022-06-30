@@ -1,16 +1,12 @@
-﻿using System;
+﻿using AutoMapper;
+using HMS_BE.DTO.PagingModel;
+using HMS_BE.DTO.SearchModel;
+using HMS_BE.Models;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using HMS_BE.DTO;
-using HMS_BE.Repository;
-using AutoMapper;
-using HMS_BE.DTO;
-using HMS_BE.DTO.SearchModel;
-using HMS_BE.DTO.PagingModel;
 
 namespace HMS_BE.Controllers
 {
@@ -18,6 +14,8 @@ namespace HMS_BE.Controllers
     [ApiController]
     public class WorksController : ControllerBase
     {
+        private readonly HMSContext _context;
+        private readonly IMapper _mapper;
         private readonly HMS_BE.Repository.IWorkRepository _workRepository;
         private readonly HMS_BE.Repository.IAllowedWorkGroupRepository _allowedWorkGroupRepository;
 
@@ -27,46 +25,69 @@ namespace HMS_BE.Controllers
             _allowedWorkGroupRepository = allowedWorkGroupRepository;
         }
 
-        //// GET: api/Works
+        // GET: api/Works
         //[HttpGet]
         //public async Task<ActionResult<IEnumerable<Work>>> GetWorks()
         //{
         //    return await _context.Works.ToListAsync();
         //}
 
-        // GET: api/Works
-        // GET work by group id
-        //[HttpGet]
-        //public async Task<ActionResult<IEnumerable<Work>>> GetWorks([FromQuery] AllowedWorkGroupSearchModel searchModel, PagingModel paging)
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<DTO.Work>>> GetWorks([FromQuery] WorkSearchModel workSearchModel, PagingModel paging)
+        {
+            if (workSearchModel is null)
+            {
+                throw new ArgumentNullException(nameof(workSearchModel));
+            }
+
+            try
+            {
+                paging = HMS_BE.Utils.PagingUtil.checkDefaultPaging(paging);
+                var works = await _workRepository.GetWorkById(workSearchModel, paging);
+                return Ok(works);
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest();
+            }
+        }
+
+        //GET: api/Works
+        //GET work by group id
+
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<IEnumerable<DTO.Work>>> GetWork(int id)
         //{
-        //    var wgrlist = await _allowedWorkGroupRepository.GetAllowedWorkGroupsByGroupID(searchModel, paging);
-            
+        //    var wgrlist = await _workRepository.GetAllowedWorkGroupsByGroupID(id);
+
         //    if (wgrlist == null)
         //    {
         //        return NotFound();
         //    }
-        //    List<Work> wlist = new List<Work>();
+        //    List<DTO.Work> wlist = new List<DTO.Work>();
         //    foreach (var wgr in wgrlist)
-        //        {
-        //            var w = await _workRepository.GetWorkById((int)wgr.WorkId);
-        //            wlist.Add(w);
-        //        }
+        //    {
+        //        var w = await _workRepository.GetWorkById((int)wgr.id);
+        //        wlist.Add(w);
+        //    }
         //    return Ok(wlist.AsEnumerable());
         //}
 
         //// GET: api/Works/5
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<Work>> GetWork(int id)
-        //{
-        //    var work = await _context.Works.FindAsync(id);
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Work>> GetWork(int id)
+        {
+            var work = await _context.Works.FindAsync(id);
 
-        //    if (work == null)
-        //    {
-        //        return NotFound();
-        //    }
+            if (work == null)
+            {
+                return NotFound();
+            }
 
-        //    return work;
-        //}
+            return work;
+        }
 
         //// PUT: api/Works/5
         //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -129,7 +150,7 @@ namespace HMS_BE.Controllers
         // PUT: api/Works/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutWork(int id, Work work)
+        public async Task<IActionResult> PutWork(int id, DTO.Work work)
         {
             if (id != work.Id)
             {
@@ -151,7 +172,7 @@ namespace HMS_BE.Controllers
         // POST: api/Works
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Work>> PostWork(Work work)
+        public async Task<ActionResult<DTO.Work>> PostWork(DTO.Work work)
         {
             await _workRepository.AddWork(work);
 

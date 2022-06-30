@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using HMS_BE.DAO;
 using HMS_BE.DTO;
+using HMS_BE.DTO.PagingModel;
+using HMS_BE.DTO.SearchModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,6 +40,38 @@ namespace HMS_BE.Repository
         {
             var w = await WorkDAO.Instance.Get(id);
             return _mapper.Map<HMS_BE.DTO.Work>(w);
+        }
+
+        public async Task<BasePagingModel<WorkModel>> GetWorkById(WorkSearchModel searchModel, PagingModel paging)
+        {
+            var wgrs = await WorkDAO.Instance.GetWorkById(searchModel.workId);
+            List<HMS_BE.DTO.Work> workList = _mapper.Map<IEnumerable<HMS_BE.DTO.Work>>(wgrs).ToList();
+            int totalItem = workList.ToList().Count;
+
+            workList = workList.Skip((paging.PageIndex - 1) * paging.PageSize)
+                .Take(paging.PageSize).ToList();
+
+            var workModelList = new List<HMS_BE.DTO.WorkModel>();
+
+            foreach (var wrk in workList)
+            {
+                workModelList.Add(new HMS_BE.DTO.WorkModel()
+                {
+                    Work = wrk,
+                    WorkTicket = _mapper.Map<HMS_BE.DTO.WorkTicket>(await WorkTicketDAO.Instance.Get((int)wrk.Id))
+                });
+            }
+
+            var workResult = new BasePagingModel<HMS_BE.DTO.WorkModel>()
+            {
+                PageIndex = paging.PageIndex,
+                PageSize = paging.PageSize,
+                TotalItem = totalItem,
+                TotalPage = (int)Math.Ceiling((decimal)totalItem / (decimal)paging.PageSize),
+                Data = workModelList
+            };
+
+            return workResult;
         }
 
         public async Task<IEnumerable<Work>> GetWorkList()

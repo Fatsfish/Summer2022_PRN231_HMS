@@ -79,5 +79,13 @@ namespace HMS_BE.DAO
                 await context.SaveChangesAsync();
             }
         }
+
+        public async Task<IEnumerable<HMS_BE.Models.Work?>> GetWorkById(int id)
+        {
+            var context = new HMSContext();
+            IEnumerable<HMS_BE.Models.Work?> works = await context.Works.Where(Work => Work.Id == id).ToListAsync();
+            return works;
+        }
+
     }
 }
