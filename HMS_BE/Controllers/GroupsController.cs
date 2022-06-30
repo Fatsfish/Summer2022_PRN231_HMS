@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HMS_BE.Models.PagingModel;
+using HMS_BE.Models.SearchModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +16,8 @@ namespace HMS_BE.Controllers
     {
         private readonly HMS_BE.Repository.IGroupRepository repo;
 
+        public PagingModel PagingUltil { get; private set; }
+
         public GroupsController(HMS_BE.Repository.IGroupRepository repository)
         {
             repo = repository;
@@ -21,26 +25,24 @@ namespace HMS_BE.Controllers
 
         // GET: api/Groups
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<HMS_BE.DTO.Group>>> GetGroups()
+        public async Task<IActionResult> GetGroups([FromQuery] GroupSearchModel searchModel, [FromQuery] PagingModel paging)
         {
-            var list = await repo.GetGroupList();
-            if(list == null)
+            if(searchModel is null)
             {
-                return NotFound();
+                throw new ArgumentNullException(nameof(searchModel));
             }
-            return Ok(list);
-        }
 
-        [HttpGet]
-        [Route("/AvailabelGroup")]
-        public async Task<ActionResult<IEnumerable<HMS_BE.DTO.Group>>> GetAvailableGroups()
-        {
-            var list = await repo.GetAvalableGroupList();
-            if (list == null)
+            try
             {
-                return NotFound();
+                paging = HMS_BE.Utils.PagingUtil.checkDefaultPaging(paging);
+                var users = await repo.GetGroupList(searchModel, paging);
+                return Ok(users);
             }
-            return Ok(list);
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest();
+            }
         }
 
         // GET: api/Groups/5
