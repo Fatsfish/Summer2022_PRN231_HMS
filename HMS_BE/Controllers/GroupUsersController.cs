@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HMS_BE.DTO;
+using HMS_BE.Models.PagingModel;
+using HMS_BE.Models.SearchModel;
 
 namespace HMS_BE.Controllers
 {
@@ -25,9 +27,9 @@ namespace HMS_BE.Controllers
 
         // GET: api/GroupUsers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GroupUser>>> GetGroupUsers([System.Web.Http.FromUri] int? id = null, [System.Web.Http.FromUri] bool condition = true)
+        public async Task<ActionResult<IEnumerable<GroupUser>>> GetGroupUsers([FromQuery] GroupUserSearchModel searchModel, [FromQuery] PagingModel paging)
         {
-            var list = await _groupUserRepository.GetConditionGroupUsersByGroupId(id, condition);
+            var list = await _groupUserRepository.GetConditionGroupUsersByGroupId(searchModel, paging);
             if (list == null)
             {
                 return NotFound();

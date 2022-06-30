@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
 using HMS_BE.DAO;
+using HMS_BE.Models.PagingModel;
+using HMS_BE.Models.SearchModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Utilities;
 
 namespace HMS_BE.Repository
 {
@@ -30,10 +33,49 @@ namespace HMS_BE.Repository
             return;
         }
 
-        public async Task<IEnumerable<HMS_BE.DTO.GroupUser>> GetConditionGroupUsersByGroupId(int? id, bool condition)
+        public async Task<BasePagingModel<HMS_BE.DTO.GroupUserRequestModel>> GetConditionGroupUsersByGroupId(GroupUserSearchModel searchModel, PagingModel paging)
         {
-            var list = await GroupUserDAO.Instance.GetConditionGroupUserByGroupId(id, condition);
-            return _mapper.Map<IEnumerable<HMS_BE.DTO.GroupUser>>(list);
+            var list = await GroupUserDAO.Instance.GetConditionGroupUserByGroupId(searchModel.id, searchModel.condition);
+            List<HMS_BE.DTO.GroupUser> groupUserList = _mapper.Map<IEnumerable<HMS_BE.DTO.GroupUser>>(list).ToList();
+
+
+            //// Search for user list
+            //groupUserList = groupUserList.Where(x => StringNormalizer.VietnameseNormalize(x.Name)
+            //                .Contains(StringNormalizer.VietnameseNormalize(searchModel.SearchTerm)))
+            //            .Where(x => (searchModel.isDelete != null) ? x.IsDelete == (bool)searchModel.isDelete
+            //                                : true)
+            //            .ToList();
+
+            // Calculate total item
+            int totalItem = groupUserList.ToList().Count;
+
+            groupUserList = groupUserList.Skip((paging.PageIndex - 1) * paging.PageSize)
+                .Take(paging.PageSize).ToList();
+
+            var groupUserRequestList = new List<HMS_BE.DTO.GroupUserRequestModel>();
+
+            var userList = new List<HMS_BE.Models.User>();
+            var groupList = new List<HMS_BE.Models.Group>();
+            foreach(var gu in groupUserList)
+            {
+                groupUserRequestList.Add(new HMS_BE.DTO.GroupUserRequestModel()
+                {
+                    groupUser = gu,
+                    user = _mapper.Map<HMS_BE.DTO.User>(await UserDAO.Instance.Get((int)gu.UserId)),
+                    group = _mapper.Map<HMS_BE.DTO.Group>(await GroupDAO.Instance.Get((int)gu.GroupId))
+                });
+            }
+
+            var groupUserResult = new BasePagingModel<HMS_BE.DTO.GroupUserRequestModel>()
+            {
+                PageIndex = paging.PageIndex,
+                PageSize = paging.PageSize,
+                TotalItem = totalItem,
+                TotalPage = (int)Math.Ceiling((decimal)totalItem / (decimal)paging.PageSize),
+                Data = groupUserRequestList
+            };
+
+            return groupUserResult;
         }
 
         public async Task<HMS_BE.DTO.GroupUser> GetGroupUserByID(int id)
