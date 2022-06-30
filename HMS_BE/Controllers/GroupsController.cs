@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using HMS_BE.Models.PagingModel;
-using HMS_BE.Models.SearchModel;
+using HMS_BE.DTO.PagingModel;
+using HMS_BE.DTO.SearchModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +16,6 @@ namespace HMS_BE.Controllers
     {
         private readonly HMS_BE.Repository.IGroupRepository _groupRepository;
 
-        public PagingModel PagingUltil { get; private set; }
 
         public GroupsController(HMS_BE.Repository.IGroupRepository grouprepository)
         {
@@ -35,8 +34,8 @@ namespace HMS_BE.Controllers
             try
             {
                 paging = HMS_BE.Utils.PagingUtil.checkDefaultPaging(paging);
-                var users = await _groupRepository.GetGroupList(searchModel, paging);
-                return Ok(users);
+                var groups = await _groupRepository.GetGroupList(searchModel, paging);
+                return Ok(groups);
             }
             catch (Exception ex)
             {

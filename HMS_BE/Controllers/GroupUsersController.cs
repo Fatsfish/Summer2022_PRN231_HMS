@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HMS_BE.DTO;
-using HMS_BE.Models.PagingModel;
-using HMS_BE.Models.SearchModel;
+using HMS_BE.DTO.PagingModel;
+using HMS_BE.DTO.SearchModel;
 
 namespace HMS_BE.Controllers
 {

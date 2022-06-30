@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using HMS_BE.DAO;
-using HMS_BE.Models.PagingModel;
-using HMS_BE.Models.SearchModel;
+using HMS_BE.DTO.PagingModel;
+using HMS_BE.DTO.SearchModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,8 +54,6 @@ namespace HMS_BE.Repository
 
             var groupUserRequestList = new List<HMS_BE.DTO.GroupUserRequestModel>();
 
-            var userList = new List<HMS_BE.Models.User>();
-            var groupList = new List<HMS_BE.Models.Group>();
             foreach(var gu in groupUserList)
             {
                 groupUserRequestList.Add(new HMS_BE.DTO.GroupUserRequestModel()

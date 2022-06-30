@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace HMS_BE.Models.PagingModel
+namespace HMS_BE.DTO.PagingModel
 {
     public class BasePagingModel<TViewModel>
     {

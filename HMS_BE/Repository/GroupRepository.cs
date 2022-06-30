@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using HMS_BE.DAO;
-using HMS_BE.Models.PagingModel;
-using HMS_BE.Models.SearchModel;
+using HMS_BE.DTO.PagingModel;
+using HMS_BE.DTO.SearchModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;

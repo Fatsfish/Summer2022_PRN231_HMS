@@ -1,4 +1,4 @@
-﻿namespace HMS_BE.Models.SearchModel
+﻿namespace HMS_BE.DTO.SearchModel
 {
     public class GroupUserSearchModel
     {
