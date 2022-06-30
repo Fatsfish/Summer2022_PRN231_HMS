@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HMS_BE.DTO.PagingModel;
+using HMS_BE.DTO.SearchModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,42 +14,41 @@ namespace HMS_BE.Controllers
     [ApiController]
     public class GroupsController : ControllerBase
     {
-        private readonly HMS_BE.Repository.IGroupRepository repo;
+        private readonly HMS_BE.Repository.IGroupRepository _groupRepository;
 
-        public GroupsController(HMS_BE.Repository.IGroupRepository repository)
+
+        public GroupsController(HMS_BE.Repository.IGroupRepository grouprepository)
         {
-            repo = repository;
+            _groupRepository = grouprepository;
         }
 
         // GET: api/Groups
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<HMS_BE.DTO.Group>>> GetGroups()
+        public async Task<IActionResult> GetGroups([FromQuery] GroupSearchModel searchModel, [FromQuery] PagingModel paging)
         {
-            var list = await repo.GetGroupList();
-            if(list == null)
+            if(searchModel is null)
             {
-                return NotFound();
+                throw new ArgumentNullException(nameof(searchModel));
             }
-            return Ok(list);
-        }
 
-        [HttpGet]
-        [Route("/AvailabelGroup")]
-        public async Task<ActionResult<IEnumerable<HMS_BE.DTO.Group>>> GetAvailableGroups()
-        {
-            var list = await repo.GetAvalableGroupList();
-            if (list == null)
+            try
             {
-                return NotFound();
+                paging = HMS_BE.Utils.PagingUtil.checkDefaultPaging(paging);
+                var groups = await _groupRepository.GetGroupList(searchModel, paging);
+                return Ok(groups);
             }
-            return Ok(list);
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest();
+            }
         }
 
         // GET: api/Groups/5
         [HttpGet("{id}")]
         public async Task<ActionResult<HMS_BE.DTO.Group>> GetGroup(int id)
         {
-            var group = await repo.GetGroupById(id);
+            var group = await _groupRepository.GetGroupById(id);
 
             if (group == null)
             {
@@ -69,11 +70,11 @@ namespace HMS_BE.Controllers
 
             try
             {
-                await repo.UpdateGroup(group);
+                await _groupRepository.UpdateGroup(group);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (await repo.GetGroupById(group.Id) == null)
+                if (await _groupRepository.GetGroupById(group.Id) == null)
                 {
                     return NotFound();
                 }
@@ -91,11 +92,11 @@ namespace HMS_BE.Controllers
         {
             try
             {
-                await repo.AddGroup(group);
+                await _groupRepository.AddGroup(group);
             }
             catch (DbUpdateException)
             {
-                if (await repo.GetGroupById(group.Id) != null)
+                if (await _groupRepository.GetGroupById(group.Id) != null)
                 {
                     return Conflict();
                 }
@@ -110,13 +111,13 @@ namespace HMS_BE.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteGroup(int id)
         {
-            var group = await repo.GetGroupById(id);
+            var group = await _groupRepository.GetGroupById(id);
             if (group == null)
             {
                 return NotFound();
             }
 
-            await repo.DeleteGroup(id);
+            await _groupRepository.DeleteGroup(id);
             return NoContent();
         }
     }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HMS_BE.Models.SearchModel
+namespace HMS_BE.DTO.SearchModel
 {
 
     public class UserSearchModel

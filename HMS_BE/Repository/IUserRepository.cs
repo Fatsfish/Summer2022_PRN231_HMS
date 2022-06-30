@@ -1,5 +1,6 @@
-﻿using HMS_BE.Models.PagingModel;
-using HMS_BE.Models.SearchModel;
+﻿
+using HMS_BE.DTO.PagingModel;
+using HMS_BE.DTO.SearchModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
