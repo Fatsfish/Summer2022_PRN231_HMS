@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HMS_BE.Models;
-using HMS_BE.Models.PagingModel;
 using HMS_BE.Utils;
-using HMS_BE.Models.SearchModel;
+using AutoMapper;
+using HMS_BE.Repository;
+using HMS_BE.DTO.PagingModel;
+using HMS_BE.DTO.SearchModel;
 
 namespace HMS_BE.Controllers
 {
@@ -16,52 +18,50 @@ namespace HMS_BE.Controllers
     public class UsersController : ControllerBase
     {
         private readonly HMSContext _context;
+        private readonly IUserRepository _userRepository;
 
-        public UsersController(HMSContext context)
+        public UsersController(HMSContext context, IUserRepository userRepository)
         {
             _context = context;
+            _userRepository = userRepository;
         }
 
         // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers([FromQuery] UserSearchModel searchModel, [FromQuery] PagingModel paging)
+        public async Task<IActionResult> GetUsers([FromQuery] UserSearchModel searchModel, [FromQuery] PagingModel paging)
         {
+            if (searchModel is null)
+            {
+                throw new ArgumentNullException(nameof(searchModel));
+            }
+
             try
             {
-                if (searchModel is null)
-                {
-                    throw new ArgumentNullException(nameof(searchModel));
-                }
-
                 paging = PagingUtil.checkDefaultPaging(paging);
-                var users = await _context.Users.ToListAsync();
-                return users;
+                var users = await _userRepository.GetUserList(searchModel, paging);
+                return Ok(users);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return BadRequest();
             }
-
+            
         }
 
         // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
+        public async Task<IActionResult> GetUser(int id)
         {
             try
             {
-                var paging = PagingUtil.getDefaultPaging();
-                var user = await _context.Users.FindAsync(id);
+                var user = await _userRepository.GetUserById(id);
 
-                if (user == null)
-                {
-                    return NotFound();
-                }
-
-                return user;
+                return Ok(user);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return BadRequest();
             }
         }

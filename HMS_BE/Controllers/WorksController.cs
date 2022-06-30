@@ -9,6 +9,8 @@ using HMS_BE.DTO;
 using HMS_BE.Repository;
 using AutoMapper;
 using HMS_BE.DTO;
+using HMS_BE.DTO.SearchModel;
+using HMS_BE.DTO.PagingModel;
 
 namespace HMS_BE.Controllers
 {
@@ -34,23 +36,23 @@ namespace HMS_BE.Controllers
 
         // GET: api/Works
         // GET work by group id
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Work>>> GetWorks([System.Web.Http.FromUri] int groupId)
-        {
-            var wgrlist = await _allowedWorkGroupRepository.GetAllowedWorkGroupsByGroupID(groupId);
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<Work>>> GetWorks([FromQuery] AllowedWorkGroupSearchModel searchModel, PagingModel paging)
+        //{
+        //    var wgrlist = await _allowedWorkGroupRepository.GetAllowedWorkGroupsByGroupID(searchModel, paging);
             
-            if (wgrlist == null)
-            {
-                return NotFound();
-            }
-            List<Work> wlist = new List<Work>();
-            foreach (var wgr in wgrlist)
-                {
-                    var w = await _workRepository.GetWorkById((int)wgr.WorkId);
-                    wlist.Add(w);
-                }
-            return Ok(wlist.AsEnumerable());
-        }
+        //    if (wgrlist == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    List<Work> wlist = new List<Work>();
+        //    foreach (var wgr in wgrlist)
+        //        {
+        //            var w = await _workRepository.GetWorkById((int)wgr.WorkId);
+        //            wlist.Add(w);
+        //        }
+        //    return Ok(wlist.AsEnumerable());
+        //}
 
         //// GET: api/Works/5
         //[HttpGet("{id}")]

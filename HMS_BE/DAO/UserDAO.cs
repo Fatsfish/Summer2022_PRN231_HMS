@@ -13,10 +13,6 @@ namespace HMS_BE.DAO
     {
         private static UserDAO instance = null;
         private static readonly object instanceLock = new object();
-        private readonly IMapper _mapper;
-        private UserDAO()
-        {
-        }
 
         public static UserDAO Instance
         {
@@ -41,18 +37,17 @@ namespace HMS_BE.DAO
             return user;
         }
 
-        public async Task<HMS_BE.DTO.User?> Get(int id)
+        public async Task<HMS_BE.Models.User> Get(int id)
         {
             var context = new HMSContext();
-            HMS_BE.Models.User? User = await context.Users.Where(User => User.Id == id).FirstOrDefaultAsync();
-            var r = _mapper.Map<HMS_BE.DTO.User>(User);
-            return r;
+            HMS_BE.Models.User User = await context.Users.Where(User => User.Id == id).FirstOrDefaultAsync();
+            return User;
         }
 
-        public async Task Add(HMS_BE.DTO.User User)
+        public async Task Add(HMS_BE.Models.User User)
         {
             var context = new HMSContext();
-            context.Users.Add(_mapper.Map< HMS_BE.Models.User >( User));
+            context.Users.Add(User);
             await context.SaveChangesAsync();
         }
 
@@ -68,10 +63,10 @@ namespace HMS_BE.DAO
             }
         }
 
-        public async Task Update(HMS_BE.DTO.User User)
+        public async Task Update(HMS_BE.Models.User User)
         {
             var context = new HMSContext();
-            context.Users.Update(_mapper.Map<HMS_BE.Models.User>(User));
+            context.Users.Update(User);
             await context.SaveChangesAsync();
         }
     }
