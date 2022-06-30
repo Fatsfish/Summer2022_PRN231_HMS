@@ -27,7 +27,7 @@ namespace HMS_BE.Controllers
 
         // GET: api/AllowedWorkGroups
         [HttpGet]
-        public async Task<IActionResult> GetAllowedWorkGroups([FromQuery] AllowedWorkGroupSearchModel searchModel, PagingModel paging)
+        public async Task<IActionResult> GetAllowedWorkGroups([FromQuery] AllowedWorkGroupSearchModel searchModel, [FromQuery]PagingModel paging)
         {
             if (searchModel is null)
             {

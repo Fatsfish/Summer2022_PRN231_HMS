@@ -15,7 +15,7 @@ namespace HMS_BE.Controllers
     [ApiController]
     public class GroupUsersController : ControllerBase
     {
-        private readonly HMS_BE.Models.HMSContext _context;
+
         private readonly HMS_BE.Repository.IGroupUserRepository _groupUserRepository;
         private readonly HMS_BE.Repository.IWorkTicketRepository _workTicketRepository;
 
@@ -29,12 +29,22 @@ namespace HMS_BE.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GroupUser>>> GetGroupUsers([FromQuery] GroupUserSearchModel searchModel, [FromQuery] PagingModel paging)
         {
-            var list = await _groupUserRepository.GetConditionGroupUsersByGroupId(searchModel, paging);
-            if (list == null)
+            if (searchModel is null)
             {
-                return NotFound();
+                throw new ArgumentNullException(nameof(searchModel));
             }
-            return Ok(list);
+
+            try
+            {
+                paging = HMS_BE.Utils.PagingUtil.checkDefaultPaging(paging);
+                var groups = await _groupUserRepository.GetConditionGroupUsersByGroupId(searchModel, paging);
+                return Ok(groups);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest();
+            }
         }
 
         //// GET: api/GroupUsers/5
@@ -141,11 +151,6 @@ namespace HMS_BE.Controllers
 
             await _groupUserRepository.RemoveGroupUser(id);
             return NoContent();
-        }
-
-        private bool GroupUserExists(int id)
-        {
-            return _context.GroupUsers.Any(e => e.Id == id);
         }
     }
 }
