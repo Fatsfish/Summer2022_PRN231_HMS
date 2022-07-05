@@ -1,6 +1,5 @@
 ﻿using HMS_BE.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -73,17 +72,17 @@ namespace HMS_BE.DAO
         {
             var context = new HMSContext();
             var tmpWork = Get(Work.Id);
-            if(tmpWork == null)
+            if (tmpWork == null)
             {
                 context.Works.Update(Work);
                 await context.SaveChangesAsync();
             }
         }
 
-        public async Task<IEnumerable<HMS_BE.Models.Work?>> GetWorkById(int id)
+        public async Task<Work> GetWorkById(int id)
         {
             var context = new HMSContext();
-            IEnumerable<HMS_BE.Models.Work?> works = await context.Works.Where(Work => Work.Id == id).ToListAsync();
+            var works = await context.Works.FirstOrDefaultAsync(Work => Work.Id == id);
             return works;
         }
 

@@ -42,10 +42,10 @@ namespace HMS_BE.Repository
             return _mapper.Map<HMS_BE.DTO.Work>(w);
         }
 
-        public async Task<BasePagingModel<WorkModel>> GetWorkById(WorkSearchModel searchModel, PagingModel paging)
+        public async Task<BasePagingModel<WorkModel>> GetWorks(WorkSearchModel searchModel, PagingModel paging)
         {
-            var wgrs = await WorkDAO.Instance.GetWorkById(searchModel.workId);
-            List<HMS_BE.DTO.Work> workList = _mapper.Map<IEnumerable<HMS_BE.DTO.Work>>(wgrs).ToList();
+            var work = await WorkDAO.Instance.GetWorkById(searchModel.workId);
+            List<HMS_BE.DTO.Work> workList = _mapper.Map<IEnumerable<HMS_BE.DTO.Work>>(work).ToList();
             int totalItem = workList.ToList().Count;
 
             workList = workList.Skip((paging.PageIndex - 1) * paging.PageSize)
