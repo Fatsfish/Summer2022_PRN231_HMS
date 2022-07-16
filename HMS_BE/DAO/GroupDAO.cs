@@ -35,13 +35,6 @@ namespace HMS_BE.DAO
             return group;
         }
 
-        public async Task<IEnumerable<HMS_BE.Models.Group?>> GetAvailableGroup()
-        {
-            var context = new HMSContext();
-            List<HMS_BE.Models.Group?> group = await context.Groups.Where(group => group.IsDelete == false).ToListAsync();
-            return group;
-        }
-
 
         public async Task<HMS_BE.Models.Group?> Get(int id)
         {

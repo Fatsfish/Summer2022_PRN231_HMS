@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HMS_BE.Models;
-using HMS_BE.Models.PagingModel;
 using HMS_BE.Utils;
-using HMS_BE.Models.SearchModel;
 using AutoMapper;
 using HMS_BE.Repository;
+using HMS_BE.DTO.PagingModel;
+using HMS_BE.DTO.SearchModel;
 
 namespace HMS_BE.Controllers
 {

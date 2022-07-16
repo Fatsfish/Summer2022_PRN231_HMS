@@ -1,5 +1,5 @@
 ﻿using HMS_BE.Constants;
-using HMS_BE.Models.PagingModel;
+using HMS_BE.DTO.PagingModel;
 
 namespace HMS_BE.Utils
 {
