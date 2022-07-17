@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using HMS_BE.DAO;
 using HMS_BE.DTO;
+using HMS_BE.DTO.PagingModel;
+using HMS_BE.DTO.SearchModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,6 +59,28 @@ namespace HMS_BE.Repository
         public async Task DeleteWorkTicket(int id)
         {
             await WorkTicketDAO.Instance.Delete(id);
+        }
+
+        public async Task<BasePagingModel<DTO.WorkTicket>> GetWorkTickets(WorkTicketSearchModel searchModel, PagingModel paging)
+        {
+            var list = await WorkTicketDAO.Instance.GetWorkTicketsByUserID(searchModel.workTicketId);
+            List<HMS_BE.DTO.WorkTicket> workTicketList = _mapper.Map<IEnumerable<HMS_BE.DTO.WorkTicket>>(list).ToList();
+
+            int totalItem = workTicketList.ToList().Count;
+
+            workTicketList = workTicketList.Skip((paging.PageIndex - 1) * paging.PageSize)
+                .Take(paging.PageSize).ToList();
+
+            var workTicketResult = new BasePagingModel<HMS_BE.DTO.WorkTicket>()
+            {
+                PageIndex = paging.PageIndex,
+                PageSize = paging.PageSize,
+                TotalItem = totalItem,
+                TotalPage = (int)Math.Ceiling((decimal)totalItem / (decimal)paging.PageSize),
+                Data = workTicketList
+            };
+
+            return workTicketResult;
         }
     }
 }
