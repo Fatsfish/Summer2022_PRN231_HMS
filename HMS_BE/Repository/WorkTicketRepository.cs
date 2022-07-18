@@ -63,7 +63,7 @@ namespace HMS_BE.Repository
 
         public async Task<BasePagingModel<DTO.WorkTicket>> GetWorkTickets(WorkTicketSearchModel searchModel, PagingModel paging)
         {
-            var list = await WorkTicketDAO.Instance.GetWorkTicketsByUserID(searchModel.workTicketId);
+            var list = await WorkTicketDAO.Instance.Get();
             List<HMS_BE.DTO.WorkTicket> workTicketList = _mapper.Map<IEnumerable<HMS_BE.DTO.WorkTicket>>(list).ToList();
 
             int totalItem = workTicketList.ToList().Count;
@@ -81,6 +81,12 @@ namespace HMS_BE.Repository
             };
 
             return workTicketResult;
+        }
+
+        public async Task<WorkTicket> GetWorkTicketById(int id)
+        {
+            var workTicket = await WorkTicketDAO.Instance.Get(id);
+            return _mapper.Map<HMS_BE.DTO.WorkTicket>(workTicket);
         }
     }
 }

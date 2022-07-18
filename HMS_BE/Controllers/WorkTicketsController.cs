@@ -27,7 +27,7 @@ namespace HMS_BE.Controllers
 
         // GET: api/WorkTickets
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GroupUser>>> GetWorkTickets([FromQuery] WorkTicketSearchModel searchModel, [FromQuery] PagingModel paging)
+        public async Task<ActionResult<IEnumerable<WorkTicket>>> GetWorkTickets([FromQuery] WorkTicketSearchModel searchModel, [FromQuery] PagingModel paging)
         {
             if (searchModel is null)
             {
@@ -61,16 +61,16 @@ namespace HMS_BE.Controllers
 
         // GET: api/WorkTickets/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<WorkTicket>> GetWorkTicket(int id)
+        public async Task<ActionResult<DTO.WorkTicket>> GetWorkTicket(int id)
         {
-            var work = await _context.WorkTickets.FindAsync(id);
+            var workTicket = await _workTicketRepository.GetWorkTicketById(id);
 
-            if (work == null)
+            if (workTicket == null)
             {
                 return NotFound();
             }
 
-            return work;
+            return Ok(workTicket);
         }
 
         [HttpPut("{id}")]

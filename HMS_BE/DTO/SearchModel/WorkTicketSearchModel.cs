@@ -2,7 +2,7 @@
 {
     public class WorkTicketSearchModel
     {
-        public int workTicketId { get; set; }
-        public int workID { get; set; }
+        public string SearchTerm { get; set; }
+        public bool? isDelete { get; set; }
     }
 }

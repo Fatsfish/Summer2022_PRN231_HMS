@@ -77,16 +77,16 @@ namespace HMS_BE.Controllers
         }
         //// GET: api/Works/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Work>> GetWork(int id)
+        public async Task<ActionResult<DTO.Work>> GetWork(int id)
         {
-            var work = await _context.Works.FindAsync(id);
+            var work = await _workRepository.GetWorkById(id);
 
             if (work == null)
             {
                 return NotFound();
             }
 
-            return work;
+            return Ok(work);
         }
 
         [HttpPut("{id}")]
