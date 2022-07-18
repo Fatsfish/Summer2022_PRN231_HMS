@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Utilities;
 
 namespace HMS_BE.Repository
 {
@@ -44,14 +45,24 @@ namespace HMS_BE.Repository
 
         public async Task<BasePagingModel<Work>> GetWorks(WorkSearchModel searchModel, PagingModel paging)
         {
-            var work = await WorkDAO.Instance.GetWorkById(searchModel.workId);
+            var work = await WorkDAO.Instance.Get();
             List<HMS_BE.DTO.Work> workList = _mapper.Map<IEnumerable<HMS_BE.DTO.Work>>(work).ToList();
+
+            //workList = workList.Skip((paging.PageIndex - 1) * paging.PageSize)
+            //.Take(paging.PageSize).ToList();
+
+            workList = workList.Where(x => StringNormalizer.VietnameseNormalize(x.Name)
+                            .Contains(StringNormalizer.VietnameseNormalize(searchModel.SearchTerm)))
+                        .Where(x => (searchModel.isDelete != null) ? x.IsDelete == (bool)searchModel.isDelete
+                                            : true)
+                        .ToList();
+
             int totalItem = workList.ToList().Count;
 
             workList = workList.Skip((paging.PageIndex - 1) * paging.PageSize)
                 .Take(paging.PageSize).ToList();
 
-            var workModelList = new List<HMS_BE.DTO.Work>();
+            //var workModelList = new List<HMS_BE.DTO.Work>();
 
             //foreach (var wrk in workList)
             //{
@@ -68,7 +79,7 @@ namespace HMS_BE.Repository
                 PageSize = paging.PageSize,
                 TotalItem = totalItem,
                 TotalPage = (int)Math.Ceiling((decimal)totalItem / (decimal)paging.PageSize),
-                Data = workModelList
+                Data = workList
             };
 
             return workResult;
