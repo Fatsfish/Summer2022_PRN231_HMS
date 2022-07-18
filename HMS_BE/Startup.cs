@@ -75,6 +75,8 @@ namespace HMS_BE
                     }
                 });
 
+                c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
+
                 c.CustomSchemaIds(type => type.ToString());
             });
             services
