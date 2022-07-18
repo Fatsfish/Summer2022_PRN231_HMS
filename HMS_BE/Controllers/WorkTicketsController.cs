@@ -27,17 +27,6 @@ namespace HMS_BE.Controllers
 
         // GET: api/WorkTickets
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<WorkTicket>>> GetWorkTicketStatus([FromQuery] bool isDone)
-        {
-            if (isDone)
-            {
-                var availableList = await _workTicketRepository.GetDoneWorkTickets();
-                return Ok(availableList);
-            }
-            var list = await _workTicketRepository.GetDoneWorkTickets();
-            return Ok(list);
-        }
-
         public async Task<ActionResult<IEnumerable<GroupUser>>> GetWorkTickets([FromQuery] WorkTicketSearchModel searchModel, [FromQuery] PagingModel paging)
         {
             if (searchModel is null)
@@ -56,6 +45,18 @@ namespace HMS_BE.Controllers
                 Console.WriteLine(ex.Message);
                 return BadRequest();
             }
+        }
+
+        [HttpGet("~/api/WorkTicketStatus")]
+        public async Task<ActionResult<IEnumerable<WorkTicket>>> GetWorkTicketStatus([FromQuery] bool isDone)
+        {
+            if (isDone)
+            {
+                var availableList = await _workTicketRepository.GetDoneWorkTickets();
+                return Ok(availableList);
+            }
+            var list = await _workTicketRepository.GetDoneWorkTickets();
+            return Ok(list);
         }
 
         // GET: api/WorkTickets/5

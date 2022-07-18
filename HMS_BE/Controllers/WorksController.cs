@@ -34,7 +34,7 @@ namespace HMS_BE.Controllers
         //}
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<DTO.Work>>> GetWorks([FromQuery] WorkSearchModel workSearchModel, PagingModel paging)
+        public async Task<IActionResult> GetWorks([FromQuery] WorkSearchModel workSearchModel, [FromQuery] PagingModel paging)
         {
             if (workSearchModel is null)
             {
@@ -58,8 +58,8 @@ namespace HMS_BE.Controllers
         //GET: api/Works
         //GET work by group id
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<IEnumerable<DTO.Work>>> GetWork([FromQuery] AllowedWorkGroupSearchModel wrgSearchModel, PagingModel paging)
+        [HttpGet("~/api/WorkAllowedGroup")]
+        public async Task<ActionResult<IEnumerable<DTO.Work>>> GetWorkAllowedGroup([FromQuery] AllowedWorkGroupSearchModel wrgSearchModel, [FromQuery] PagingModel paging)
         {
             var wgrlist = await _allowedWorkGroupRepository.GetAllowedWorkGroupsByGroupID(wrgSearchModel, paging);
 

@@ -11,7 +11,7 @@ namespace HMS_BE.Repository
     {
         Task<IEnumerable<HMS_BE.DTO.Work>> GetWorkList();
         Task<IEnumerable<HMS_BE.DTO.Work>> GetAvalableWorkList();
-        Task<BasePagingModel<HMS_BE.DTO.WorkModel>> GetWorks(WorkSearchModel searchModel, PagingModel paging);
+        Task<BasePagingModel<HMS_BE.DTO.Work>> GetWorks(WorkSearchModel searchModel, PagingModel paging);
         //Task<BasePagingModel<HMS_BE.DTO.WorkModel>> GetWorkByGroupId(GroupWorkSearchModel searchModel, PagingModel paging);
         Task<HMS_BE.DTO.Work> GetWorkById(int id);
         Task AddWork(HMS_BE.DTO.Work work);

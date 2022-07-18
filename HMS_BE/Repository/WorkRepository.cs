@@ -42,7 +42,7 @@ namespace HMS_BE.Repository
             return _mapper.Map<HMS_BE.DTO.Work>(w);
         }
 
-        public async Task<BasePagingModel<WorkModel>> GetWorks(WorkSearchModel searchModel, PagingModel paging)
+        public async Task<BasePagingModel<Work>> GetWorks(WorkSearchModel searchModel, PagingModel paging)
         {
             var work = await WorkDAO.Instance.GetWorkById(searchModel.workId);
             List<HMS_BE.DTO.Work> workList = _mapper.Map<IEnumerable<HMS_BE.DTO.Work>>(work).ToList();
@@ -51,18 +51,18 @@ namespace HMS_BE.Repository
             workList = workList.Skip((paging.PageIndex - 1) * paging.PageSize)
                 .Take(paging.PageSize).ToList();
 
-            var workModelList = new List<HMS_BE.DTO.WorkModel>();
+            var workModelList = new List<HMS_BE.DTO.Work>();
 
-            foreach (var wrk in workList)
-            {
-                workModelList.Add(new HMS_BE.DTO.WorkModel()
-                {
-                    Work = wrk,
-                    WorkTicket = _mapper.Map<HMS_BE.DTO.WorkTicket>(await WorkTicketDAO.Instance.Get((int)wrk.Id))
-                });
-            }
+            //foreach (var wrk in workList)
+            //{
+            //    workModelList.Add(new HMS_BE.DTO.WorkTicket()
+            //    {
+            //        Work = wrk,
+            //        WorkTicket = _mapper.Map<HMS_BE.DTO.WorkTicket>(await WorkTicketDAO.Instance.Get((int)wrk.Id))
+            //    });
+            //}
 
-            var workResult = new BasePagingModel<HMS_BE.DTO.WorkModel>()
+            var workResult = new BasePagingModel<HMS_BE.DTO.Work>()
             {
                 PageIndex = paging.PageIndex,
                 PageSize = paging.PageSize,
