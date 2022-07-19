@@ -16,6 +16,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore.SqlServer;
 using Microsoft.EntityFrameworkCore;
 using HMS_BE.Repository;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 
 namespace HMS_BE
 {
@@ -75,6 +77,8 @@ namespace HMS_BE
                     }
                 });
 
+                c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
+
                 c.CustomSchemaIds(type => type.ToString());
             });
             services
@@ -102,6 +106,12 @@ namespace HMS_BE
 
             // Admin
             services.AddTransient<HMS_BE.Repository.IUserRepository, HMS_BE.Repository.UserRepository>();
+
+            /*services.AddSingleton(FirebaseApp.Create(new AppOptions()
+            {
+                Credential = GoogleCredential.FromFile(Configuration["Firebase:Admin"]),
+            })
+           );*/
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
