@@ -17,6 +17,7 @@ namespace HMS_BE.Profiles
             CreateMap<HMS_BE.Models.UserRole, HMS_BE.DTO.UserRole>().ReverseMap();
             CreateMap<HMS_BE.Models.Work, HMS_BE.DTO.Work>().ReverseMap();
             CreateMap<HMS_BE.Models.WorkTicket, HMS_BE.DTO.WorkTicket>().ReverseMap();
+            CreateMap<HMS_BE.Models.GroupUser, HMS_BE.DTO.GroupUserCreateRequest>().ReverseMap();
         }
     }
 }
