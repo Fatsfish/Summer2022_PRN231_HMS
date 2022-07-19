@@ -91,7 +91,7 @@ namespace HMS_BE.Controllers
         // POST: api/GroupUsers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<GroupUser>> PostGroupUser(HMS_BE.DTO.GroupUser groupUser)
+        public async Task<ActionResult<GroupUser>> PostGroupUser(HMS_BE.DTO.GroupUserCreateRequest groupUser)
         {
             try
             {
@@ -99,15 +99,11 @@ namespace HMS_BE.Controllers
             }
             catch (DbUpdateException)
             {
-                if (await _groupUserRepository.GetGroupUsersByGroupId(groupUser.Id) != null)
-                {
-                    return Conflict();
-                }
 
                 throw;
             }
 
-            return CreatedAtAction("GetGroup", new { id = groupUser.Id }, groupUser);
+            return CreatedAtAction("PostGroupUser", new { id = groupUser.UserId }, groupUser);
         }
 
         //[HttpPost]
@@ -144,7 +140,7 @@ namespace HMS_BE.Controllers
             }
 
             var canLeave = await _workTicketRepository.CanLeaveGroup(id);
-            if(canLeave)
+            if(!canLeave)
             {
                 return Conflict(new HMS_BE.DTO.Error { Message = "You must finish all work tickets to leave the group" });
             }

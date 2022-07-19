@@ -14,8 +14,8 @@ namespace HMS_BE.Repository
         Task<BasePagingModel<HMS_BE.DTO.GroupUserRequestModel>> GetConditionGroupUsersByGroupId(GroupUserSearchModel searchModel, PagingModel paging);
         Task<HMS_BE.DTO.GroupUser> GetGroupUserByID(int id);
         Task RemoveGroupUser(int id);
-        Task AddGroupUser(HMS_BE.DTO.GroupUser groupUser);
+        Task AddGroupUser(HMS_BE.DTO.GroupUserCreateRequest groupUser);
         Task UpdateGroupUser(HMS_BE.DTO.GroupUser groupUser);
-        Task AddListGroupUser(IEnumerable<HMS_BE.DTO.GroupUser> groupUsers);
+        Task AddListGroupUser(IEnumerable<HMS_BE.DTO.GroupUserCreateRequest> groupUsers);
     }
 }
