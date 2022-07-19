@@ -88,6 +88,24 @@ namespace HMS_BE.Controllers
             return NoContent();
         }
 
+        // PUT: api/GroupUsers/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        [Route("GroupUserList")]
+        public async Task<ActionResult<IList<GroupUser>>> PostGroupUserList(IList<HMS_BE.DTO.GroupUserCreateRequest> groupUsers)
+        {
+            try
+            {
+                await _groupUserRepository.AddListGroupUser(groupUsers);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+
+            return CreatedAtAction("PostGroupUserList", groupUsers);
+        }
+
         // POST: api/GroupUsers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
