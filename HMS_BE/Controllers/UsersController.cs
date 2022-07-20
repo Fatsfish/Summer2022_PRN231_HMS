@@ -66,6 +66,23 @@ namespace HMS_BE.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("GetUserByEmail")]
+        public async Task<IActionResult> GetUserByEmail([FromQuery]string email)
+        {
+            try
+            {
+                var user = await _userRepository.GetUserByEmail(email);
+
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest();
+            }
+        }
+
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

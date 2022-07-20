@@ -10,6 +10,7 @@ namespace HMS_BE.Repository
     {
         Task<BasePagingModel<HMS_BE.DTO.User>> GetUserList(UserSearchModel searchModel, PagingModel paging);
         Task<HMS_BE.DTO.User> GetUserById(int id);
+        Task<HMS_BE.DTO.User> GetUserByEmail(string email);
         Task AddUser(HMS_BE.DTO.User user);
         Task UpdateUser(HMS_BE.DTO.User user);
         Task DeleteUser(int id);

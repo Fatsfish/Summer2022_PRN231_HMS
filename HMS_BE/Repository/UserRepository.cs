@@ -57,6 +57,12 @@ namespace HMS_BE.Repository
             return _mapper.Map<HMS_BE.DTO.User>(usr);
         }
 
+        public async Task<HMS_BE.DTO.User> GetUserByEmail(string Email)
+        {
+            var usr = await UserDAO.Instance.GetUserByEmail(Email);
+            return _mapper.Map<HMS_BE.DTO.User>(usr);
+        }
+
         public async Task AddUser(HMS_BE.DTO.User user)
         {
             var usr = _mapper.Map<HMS_BE.Models.User>(user);
