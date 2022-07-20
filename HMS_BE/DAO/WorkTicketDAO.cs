@@ -58,6 +58,13 @@ namespace HMS_BE.DAO
             return r;
         }
 
+        public async Task<IEnumerable<HMS_BE.Models.WorkTicket?>> Get()
+        {
+            var context = new HMSContext();
+            List<HMS_BE.Models.WorkTicket?> workTicket = await context.WorkTickets.ToListAsync();
+            return workTicket;
+        }
+
         public async Task<HMS_BE.Models.WorkTicket?> Get(int id)
         {
             var context = new HMSContext();

@@ -31,7 +31,7 @@ namespace HMS_BE.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<UserRole>> GetUserRole(int id)
         {
-            var userRole = await _context.UserRoles.FindAsync(id);
+            var userRole = await _context.UserRoles.FirstOrDefaultAsync(o=>o.Id==id);
 
             if (userRole == null)
             {
@@ -41,6 +41,18 @@ namespace HMS_BE.Controllers
             return userRole;
         }
 
+        [HttpGet("List/{id}")]
+        public async Task<ActionResult<IEnumerable<UserRole>>> GetUserRolesByEmail(string id)
+        {
+            var userRole = await _context.UserRoles.Where(o=>o.User.Email.Equals(id)).ToListAsync();
+
+            if (userRole == null)
+            {
+                return NotFound();
+            }
+
+            return userRole;
+        }
         // PUT: api/UserRoles/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

@@ -19,14 +19,14 @@ namespace HMS_BE.Repository
             _mapper = mapper;
         }
 
-        public async Task AddGroupUser(HMS_BE.DTO.GroupUser groupUser)
+        public async Task AddGroupUser(HMS_BE.DTO.GroupUserCreateRequest groupUser)
         {
             var gr = _mapper.Map<HMS_BE.Models.GroupUser>(groupUser);
             await GroupUserDAO.Instance.Add(gr);
             return;
         }
 
-        public async Task AddListGroupUser(IEnumerable<HMS_BE.DTO.GroupUser> groupUsers)
+        public async Task AddListGroupUser(IEnumerable<HMS_BE.DTO.GroupUserCreateRequest> groupUsers)
         {
             var grs = _mapper.Map<IEnumerable<HMS_BE.Models.GroupUser>>(groupUsers);
             await GroupUserDAO.Instance.AddList(grs);
