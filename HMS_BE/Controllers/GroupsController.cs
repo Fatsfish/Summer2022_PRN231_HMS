@@ -44,6 +44,28 @@ namespace HMS_BE.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("GetGroupsByEmail")]
+        public async Task<IActionResult> GetGroupsByEmail([FromQuery] UserGroupSearchModel searchModel, [FromQuery] PagingModel paging)
+        {
+            if (searchModel is null)
+            {
+                throw new ArgumentNullException(nameof(searchModel));
+            }
+
+            try
+            {
+                paging = HMS_BE.Utils.PagingUtil.checkDefaultPaging(paging);
+                var groups = await _groupRepository.GetGroupListByUserEmail(searchModel, paging);
+                return Ok(groups);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest();
+            }
+        }
+
         // GET: api/Groups/5
         [HttpGet("{id}")]
         public async Task<ActionResult<HMS_BE.DTO.Group>> GetGroup(int id)

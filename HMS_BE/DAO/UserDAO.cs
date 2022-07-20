@@ -44,6 +44,13 @@ namespace HMS_BE.DAO
             return User;
         }
 
+        public async Task<HMS_BE.Models.User> GetUserByEmail(string Email)
+        {
+            var context = new HMSContext();
+            HMS_BE.Models.User User = await context.Users.Where(User => User.Email == Email).FirstOrDefaultAsync();
+            return User;
+        }
+
         public async Task Add(HMS_BE.Models.User User)
         {
             var context = new HMSContext();
