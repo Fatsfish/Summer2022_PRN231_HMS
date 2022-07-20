@@ -65,7 +65,7 @@ namespace HMS_BE.DAO
         public async Task Update(HMS_BE.Models.Group Group)
         {
             var context = new HMSContext();
-            context.Groups.Update(Group);
+            context.Entry<HMS_BE.Models.Group>(Group).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             await context.SaveChangesAsync();
         }
 

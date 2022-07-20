@@ -36,6 +36,13 @@ namespace HMS_BE.DAO
             return groupUsers;
         }
 
+        public async Task<IEnumerable<HMS_BE.Models.GroupUser?>> GetGroupUserByUserId(int id)
+        {
+            var context = new HMSContext();
+            List<HMS_BE.Models.GroupUser?> groupUsers = await context.GroupUsers.Where(GroupUser => GroupUser.UserId == id).ToListAsync();
+            return groupUsers;
+        }
+
         public async Task<IEnumerable<HMS_BE.Models.GroupUser?>> GetGroupUserList()
         {
             var context = new HMSContext();
